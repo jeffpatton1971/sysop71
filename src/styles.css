@@ -1,0 +1,9 @@
+:root { color-scheme: dark; }
+body { margin: 0; font-family: system-ui, sans-serif; background: #0b0f16; color: #e5e7eb; }
+a { color: #93c5fd; }
+.shell { max-width: 980px; margin: 0 auto; padding: 1rem; }
+nav { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+nav a.active { font-weight: 700; }
+.error { color: #fca5a5; white-space: pre-wrap; }
+pre { overflow-x: auto; background: #111827; padding: 0.75rem; border-radius: 8px; }
+input, button { padding: 0.4rem 0.5rem; }

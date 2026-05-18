@@ -1,0 +1,35 @@
+{
+  "name": "sysop71",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "vite",
+    "content:generate": "node scripts/generate-content.mjs",
+    "content:validate": "node scripts/validate-content.mjs",
+    "migrate:frontmatter": "node scripts/migrate-frontmatter.mjs",
+    "build": "npm run content:generate && vite build",
+    "test": "vitest run",
+    "publish:plan": "node scripts/publish-plan.mjs",
+    "publish:content:dry-run": "node scripts/publish-content.mjs --dry-run",
+    "publish:media:dry-run": "node scripts/publish-media.mjs --dry-run",
+    "publish:media": "node scripts/publish-media.mjs",
+    "publish:prepare": "npm run content:generate",
+    "publish:cleanup-media": "node scripts/cleanup-media.mjs",
+    "publish:cleanup-media:write": "node scripts/cleanup-media.mjs --write"
+  },
+  "dependencies": {
+    "gray-matter": "4.0.3",
+    "react": "19.2.6",
+    "react-dom": "19.2.6",
+    "react-router-dom": "7.15.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "6.0.2",
+    "vite": "8.0.13",
+    "vitest": "4.1.6"
+  }
+}
