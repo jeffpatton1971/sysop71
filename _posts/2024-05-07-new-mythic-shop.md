@@ -1,12 +1,28 @@
 ---
-layout: post
-title:  "Is the Mythic Shop in Overwatch 2 overpriced?"
-date:   2024-05-07 00:00:00 -0600
-categories: blog
-tags: Overwatch2, Shop, GamingNews, GamerLife, GamingCommunity
-comments: false
+content_type: post
+title: Is the Mythic Shop in Overwatch 2 overpriced?
+slug: new-mythic-shop
+post_id: 2024-05-07-new-mythic-shop
+date: '2024-05-07 00:00:00 -0600'
+status: published
+authors: []
+summary: ''
+categories:
+  - blog
+hashtags:
+  - overwatch2
+  - shop
+  - gamingnews
+  - gamerlife
+  - gamingcommunity
+people: []
+locations: []
+cover_image: ''
+images: []
+related: []
+legacy:
+  source: jekyll
 ---
-
 Starting in Season 10, Blizzard introduced the Mythic Shop for Overwatch 2 players. This shop allows players to get Mythic skins from previous seasons they may have missed. On the face of it, this is a good idea, and for those willing to dole out the money, it may be worth it. But is it overpriced?
 
 The basics of Mythics -- the Shop, Skins, and Prisms
@@ -32,3 +48,5 @@ Now, whether you are coming back for a new season or are a brand-new player, you
 We’re especially excited about Mythic skins: an entirely new tier of skins in Overwatch 2. These skins go beyond our existing legendary skins. For our first ever Mythic skin, we've built Genji a highly-customizable Cyber Demon skin that features layers you can mix and match, each containing different color schemes and patterns. We’re planning to include a new Mythic skin in every season’s Battle Pass.
 
 We’re giving you the choice to select your own Mythic Hero skin. Whether you are adding the new Vengeance Mercy Mythic, or getting a skin for one of your favorite heroes, you get to pick what Mythic hero skin to unlock by collecting Mythic Prisms. The best way to get Mythic Prisms is by collecting them as you progress through the Premium Battle Pass. Here’s how it will work.
+
+

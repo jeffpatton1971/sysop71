@@ -1,10 +1,25 @@
 ---
-layout: post
-title: "New Minecraft Series Kicks Off This Week"
-date: 2025-08-05
-categories: [Minecraft, Streaming, YouTube]
+content_type: post
+title: New Minecraft Series Kicks Off This Week
+slug: minecraft-series
+post_id: 2025-08-05-minecraft-series
+date: '2025-08-05'
+status: published
+authors: []
+summary: ''
+categories:
+  - Minecraft
+  - Streaming
+  - YouTube
+hashtags: []
+people: []
+locations: []
+cover_image: ''
+images: []
+related: []
+legacy:
+  source: jekyll
 ---
-
 Starting something new this week.
 
 I’ve been wanting to structure my Minecraft play a bit more—and turn it into something that’s fun to follow, whether you’re watching live or catching up later. So I’m kicking off a new series that’ll run across both Twitch and YouTube, built around a simple goal: take a plains village and grow it into a fully functioning, self-sustaining trading hub.
@@ -53,3 +68,5 @@ Basically: progress with purpose.
 ---
 
 If you’re into Minecraft, world-building, or just want something chill to watch while you work—I hope you’ll check it out. Stream’s up this Wednesday. Let’s see where this goes.
+
+

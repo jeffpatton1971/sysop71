@@ -1,11 +1,28 @@
 ---
-layout: post
-title: "The Perfect Seed Has Been Found"
-date: 2025-08-06
-categories: [minecraft, survival-series, stream-recap]
-tags: [seed selection, stream, lonely mountain, season 1]
-thumbnail: /assets/images/2025-08-06_13.46.27.png
-vod_url: https://www.twitch.tv/videos/2532696804
+content_type: post
+title: The Perfect Seed Has Been Found
+slug: perfect-seed-selected
+post_id: 2025-08-06-perfect-seed-selected
+date: '2025-08-06'
+status: published
+authors: []
+summary: ''
+categories:
+  - minecraft
+  - survival-series
+  - stream-recap
+hashtags:
+  - seedselection
+  - stream
+  - lonelymountain
+  - season1
+people: []
+locations: []
+cover_image: ''
+images: []
+related: []
+legacy:
+  source: jekyll
 ---
 Stream #1 is complete — here's how I found the perfect seed for Season 1, and why this spot is going to be home.
 <!--more-->
@@ -22,3 +39,5 @@ I’ve already set up camp outside the village and gathered enough early resourc
 This world is going to be the backdrop for everything coming in Season 1 — farms, villagers, big builds, maybe even a few surprises. The YouTube series kicks off with a curated look at this seed-hunting adventure, so if you missed the stream, that’s where you’ll want to start.
 
 Thanks to everyone who hung out during the stream — and if you didn’t catch it live, keep an eye out for Episode 1 dropping soon.
+
+

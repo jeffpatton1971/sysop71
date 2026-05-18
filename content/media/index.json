@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "2026-05-15",
+  "generatedAt": "2026-05-18T23:29:42.207Z",
+  "site": {
+    "key": "sysop71",
+    "title": "sysop71.com"
+  },
+  "storage": {
+    "accountName": "prdwebappstorage",
+    "containerName": "sysop71",
+    "baseUrl": "https://prdwebappstorage.blob.core.windows.net/sysop71",
+    "rawPrefix": "images",
+    "thumbPrefix": "thumbs"
+  },
+  "assets": []
+}

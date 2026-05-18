@@ -1,12 +1,28 @@
 ---
-layout: post
-title:  "HOWTO: Use Symmetra Teleporters"
-date:   2024-04-28 00:00:00 -0600
-categories: blog
-tags: Overwatch2, Symmetra, GamingNews, GamerLife, GamingCommunity
-comments: false
+content_type: post
+title: 'HOWTO: Use Symmetra Teleporters'
+slug: symmetra-teleports
+post_id: 2024-04-28-symmetra-teleports
+date: '2024-04-28 00:00:00 -0600'
+status: published
+authors: []
+summary: ''
+categories:
+  - blog
+hashtags:
+  - overwatch2
+  - symmetra
+  - gamingnews
+  - gamerlife
+  - gamingcommunity
+people: []
+locations: []
+cover_image: ''
+images: []
+related: []
+legacy:
+  source: jekyll
 ---
-
 Symmetra, a Damage character in Overwatch 2, wields a unique weapon- the photon beam- and deploys sentry turrets as her secondary weapon. However, her most distinctive feature is the Teleporter, a game-changing tool that enables her and her team to traverse the battlefield swiftly. Let's explore powerful strategies for using Symmetra's Teleporter to gain control and overpower the opposing team.
 
 Symmetra is a compelling character that you can use in a variety of situations and maps, but she may be best utilized on hybrid maps during the attack phase, which are the focus of this article. One of the first things you must do is communicate with your team about what you want to do, either over voice chat or via messages. It would be best to quickly convey that you wish Teleporter from point A to point B to gain an advantage.
@@ -18,3 +34,5 @@ To see how this strategy works, let's take a look at Blizzard World as an exampl
 Next, leave the Tavern using the far left exit and go to Lost and Found. It will be helpful to ping that location so everyone knows where to go. It may be worth having the other Damage character and a healer attack the main choke point to distract the Opposing team. Once we're at the doorway upstairs, place the Teleporter, and the tank will go through, followed by everyone else. Drop down onto the point, place your turrets, and wait for the rest of the team. The tank should drop down last and raise/place the shield in front of your turrets, protecting the point.
 
 Keep in mind, this strategy isn't foolproof; there'll be times when the opposing teams sees it coming. Remember that success with this strategy hinges on clear communication and team coordination. While the outlined approach provides a solid framework, flexibility and adaptability are key. Each match presents unique challenges, and the opposing team may counter your tactics. Don't hesitate to adjust your strategy, switch heroes if necessary, and stay one step ahead of the ever-shifting battlefield. Mastering Symmetra's Teleporter can give your team a significant advantage but requires practice, teamwork, and situational awareness. Good luck, and may your Teleporter lead you to victory!
+
+

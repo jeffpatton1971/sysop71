@@ -1,10 +1,28 @@
 ---
-layout: post
-title:  "Director's Take Febrary 2025"
-date:   2025-02-03 00:00:00 -0600
-categories: blog
-tags: Overwatch2, DirectorsTake, OverwatchCompetitive, GamingNews, GamerLife, GamingCommunity
-comments: true
+content_type: post
+title: Director's Take Febrary 2025
+slug: overwatch2-directors-take-february
+post_id: 2025-02-03-overwatch2-directors-take-february
+date: '2025-02-03 00:00:00 -0600'
+status: published
+authors: []
+summary: ''
+categories:
+  - blog
+hashtags:
+  - overwatch2
+  - directorstake
+  - overwatchcompetitive
+  - gamingnews
+  - gamerlife
+  - gamingcommunity
+people: []
+locations: []
+cover_image: ''
+images: []
+related: []
+legacy:
+  source: jekyll
 ---
 ![Directors Take](https://bnetcmsus-a.akamaihd.net/cms/blog_header/k5/K50EETYT5LPR1738206855553.png)
 
@@ -15,3 +33,5 @@ The recent rank reset, while it may have initially felt disruptive, has actually
 Another exciting development is the ongoing testing of the 6v6 mode, where teams are composed of two tanks, two damage, and two support heroes. While it may not have gained as much popularity as the traditional 5v5, the initial results have been promising enough to spark plans for a mini-competitive season midseason. This mode could potentially become a regular feature in the future, adding a new dimension to the game while the core game continues to embrace the classic format.
 
 On the map side, Clash maps are temporarily removed from ranked play. After hearing your feedback about issues like rushed matches and confusing mechanics, the decision was made to remove them from competitive modes. They'll still be available in Quick Play while the team works on making the experience more balanced and enjoyable.
+
+

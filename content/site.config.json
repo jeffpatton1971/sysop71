@@ -1,0 +1,20 @@
+{
+  "key": "sysop71",
+  "title": "sysop71.com",
+  "url": "https://sysop71.com",
+  "nav": [
+    { "label": "Home", "href": "/" },
+    { "label": "Posts", "href": "/posts" },
+    { "label": "Stories", "href": "/stories" },
+    { "label": "Galleries", "href": "/galleries" },
+    { "label": "Images", "href": "/images" },
+    { "label": "Search", "href": "/search" }
+  ],
+  "author": {
+    "name": "",
+    "imageUrl": "/assets/images/bio-photo.jpg"
+  },
+  "footer": {
+    "brandText": "sysop71.com"
+  }
+}
