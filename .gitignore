@@ -1,4 +1,10 @@
-_site
-.sass-cache
-.jekyll-metadata
+.tmp/
+.instagram/
+.facebook/
+node_modules/
+.vite/
+dist/
+public/content/
+test-results/
+playwright-report/
 ~*.xls*

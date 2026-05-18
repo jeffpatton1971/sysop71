@@ -41,7 +41,7 @@ export function normalizeHashtags(values) {
 export function normalizeFrontmatter(data, filename) {
   const slug = data.slug || slugFromFilename(filename)
   const fallbackDate = dateFromFilename(filename)
-  const dateValue = data.date ? String(data.date) : fallbackDate
+  const dateValue = normalizeDateValue(data.date, fallbackDate)
   const status = data.status || (data.published === false ? 'draft' : 'published')
   const legacySource = data.legacy?.source || 'jekyll'
 
@@ -73,6 +73,21 @@ export function normalizeFrontmatter(data, filename) {
   }
 
   return normalized
+}
+
+function normalizeDateValue(input, fallbackDate) {
+  if (!input) return fallbackDate
+  if (input instanceof Date && !Number.isNaN(input.getTime())) {
+    return input.toISOString().slice(0, 10)
+  }
+  const value = String(input).trim()
+  if (!value) return fallbackDate
+  if (/^\d{4}-\d{2}-\d{2}/.test(value)) return value
+  const parsed = new Date(value)
+  if (!Number.isNaN(parsed.getTime())) {
+    return parsed.toISOString().slice(0, 10)
+  }
+  return fallbackDate || value
 }
 
 export function validateNormalizedFrontmatter(data) {

@@ -1,10 +1,28 @@
 ---
-layout: post
-title:  "Overwatch2 Spotlight"
-date:   2025-02-12 00:00:00 -0600
-categories: blog
-tags: Overwatch2, Spotlight, OverwatchSeason15, GamingNews, GamerLife, GamingCommunity
-comments: true
+content_type: post
+title: Overwatch2 Spotlight
+slug: overwatch2-spotlight-2025
+post_id: 2025-02-03-overwatch2-spotlight-2025
+date: '2025-02-12 00:00:00 -0600'
+status: published
+authors: []
+summary: ''
+categories:
+  - blog
+hashtags:
+  - overwatch2
+  - spotlight
+  - overwatchseason15
+  - gamingnews
+  - gamerlife
+  - gamingcommunity
+people: []
+locations: []
+cover_image: ''
+images: []
+related: []
+legacy:
+  source: jekyll
 ---
 ![Overwatch2 Spotlight](https://bnetcmsus-a.akamaihd.net/cms/blog_header/l8/L87QFGZJNCSV1739380161755.png)
 
@@ -39,3 +57,5 @@ The season 15 mythic skin is a new skin for Zenyatta; this skin was inspired by 
 ## ESPORTS
 
 In 2025, OWCS will go from 2 to 3 stages and live events. They will be doubling the number of games and broadcasts, introducing FaceIT leagues, and integrating them directly into the OWCS. Additionally, they are adding a promotion relegation tournament allowing more chances to qualify. You can purchase in-game items from your favorite teams, with all revenue headed to those teams. Finally, they are adding two new regions; China will be playing in its own region, with Australia being added to the Pacific Subregion and OWCS Asia. The 2025 season of OWCS is happening right now!
+
+

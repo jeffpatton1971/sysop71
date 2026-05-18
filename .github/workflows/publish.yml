@@ -10,12 +10,10 @@ permissions:
   contents: write
   id-token: write
 
-environment:
-  name: Production
-
 jobs:
   publish:
     runs-on: ubuntu-latest
+    environment: Production
     steps:
       - name: Checkout
         uses: actions/checkout@v4

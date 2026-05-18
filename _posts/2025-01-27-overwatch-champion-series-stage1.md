@@ -1,10 +1,28 @@
 ---
-layout: post
-title:  "Overwatch Champion Series Stage 1"
-date:   2025-01-27 00:00:00 -0600
-categories: blog
-tags: Overwatch2, OWCS, GamingNews, Esports, GamerLife, GamingCommunity
-comments: true
+content_type: post
+title: Overwatch Champion Series Stage 1
+slug: overwatch-champion-series-stage1
+post_id: 2025-01-27-overwatch-champion-series-stage1
+date: '2025-01-27 00:00:00 -0600'
+status: published
+authors: []
+summary: ''
+categories:
+  - blog
+hashtags:
+  - overwatch2
+  - owcs
+  - gamingnews
+  - esports
+  - gamerlife
+  - gamingcommunity
+people: []
+locations: []
+cover_image: ''
+images: []
+related: []
+legacy:
+  source: jekyll
 ---
 ![Overwatch Champion Series (OWCS)](https://esports.overwatch.com/_next/image?&q=100&w=1920&url=https://a.storyblok.com/f/267720/1920x1080/7abb777c0f/stage1kbugheader.png)
 
@@ -34,3 +52,5 @@ The 2025 season also brings nine Partner Teams representing the best of Overwatc
 Fans will enjoy a variety of exclusive viewership [incentives](https://esports.overwatch.com/en-us/rewards), including Overwatch skins, sprays, and name cards, available by watching broadcasts on Twitch and YouTube. Additionally, the Cosmic Collection introduces a stunning array of new cosmetics for heroes like Mercy, D.Va, and Zenyatta. The popular Co-Streamer Program also returns, offering fans free loot while connecting them with their favorite streamers and Partner Teams.
 
 The OWCS 2025 season blends exciting innovations like Hero Bans with community-driven features and enhanced accessibility, ensuring it’s a year to remember. Follow all the action on Twitch, YouTube, and social media as Overwatch’s most prominent stars compete for glory. The journey to Hangzhou starts now!
+
+

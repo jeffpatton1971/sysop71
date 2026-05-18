@@ -59,8 +59,9 @@ function LoadingOrError({ loading, error }) {
 
 function HomePage() {
   const state = useEndpoint('home')
-  const gate = <LoadingOrError loading={state.loading} error={state.error} />
-  if (gate) return gate
+  if (state.loading || state.error) {
+    return <LoadingOrError loading={state.loading} error={state.error} />
+  }
 
   return (
     <section>
@@ -73,8 +74,9 @@ function HomePage() {
 
 function ListPage({ title, endpoint }) {
   const state = useEndpoint(endpoint)
-  const gate = <LoadingOrError loading={state.loading} error={state.error} />
-  if (gate) return gate
+  if (state.loading || state.error) {
+    return <LoadingOrError loading={state.loading} error={state.error} />
+  }
 
   const items = state.data?.items || state.data?.[endpoint] || []
 
