@@ -35,7 +35,7 @@ type SiteAuthorLink = {
 };
 
 type SiteAuthor = {
-  name: string;
+  name?: string;
   bio?: string;
   imageUrl?: string;
   links?: SiteAuthorLink[];
@@ -1753,41 +1753,68 @@ function defaultNav(): SiteNavItem[] {
   ];
 }
 
-function siteAuthor(config: SiteConfig): SiteAuthor {
+function siteAuthor(config: SiteConfig): SiteAuthor | undefined {
   const parsed = jsonObject<SiteAuthor>(process.env.CONTENT_SITE_AUTHOR_JSON);
 
-  if (parsed?.name) {
-    return parsed;
+  if (parsed && hasAuthorContent(parsed)) {
+    return cleanAuthor(parsed);
   }
 
-  if (config.author?.name) {
-    return config.author;
+  if (config.author && hasAuthorContent(config.author)) {
+    return cleanAuthor(config.author);
   }
 
-  return {
-    name: process.env.CONTENT_SITE_AUTHOR_NAME || 'Jeff Patton',
-    bio: process.env.CONTENT_SITE_AUTHOR_BIO || 'Just a dad who takes too many pictures.',
-    imageUrl: process.env.CONTENT_SITE_AUTHOR_IMAGE_URL || '/assets/images/bio-photo.jpg',
-    links: jsonArray<SiteAuthorLink>(process.env.CONTENT_SITE_AUTHOR_LINKS_JSON) ?? [
-      { label: 'Website', href: 'https://patton-tech.com' },
-      { label: 'Bluesky', href: 'https://bsky.app/profile/jeffpatton.bsky.social' },
-      { label: 'GitHub', href: 'https://github.com/jeffpatton1971' },
-      { label: 'Instagram', href: 'https://instagram.com/jspatton1971' },
-    ],
-  };
+  const envAuthor = cleanAuthor({
+    name: process.env.CONTENT_SITE_AUTHOR_NAME,
+    bio: process.env.CONTENT_SITE_AUTHOR_BIO,
+    imageUrl: process.env.CONTENT_SITE_AUTHOR_IMAGE_URL,
+    links: jsonArray<SiteAuthorLink>(process.env.CONTENT_SITE_AUTHOR_LINKS_JSON),
+  });
+
+  return hasAuthorContent(envAuthor) ? envAuthor : undefined;
 }
 
-function siteBanner(config: SiteConfig, siteTitle: string): SiteBanner {
+function siteBanner(config: SiteConfig, siteTitle: string): SiteBanner | undefined {
+  const hasBannerConfig = Boolean(config.banner);
+  const hasBannerEnv = [
+    process.env.CONTENT_SITE_BANNER_EYEBROW,
+    process.env.CONTENT_SITE_BANNER_TITLE,
+    process.env.CONTENT_SITE_BANNER_TEXT,
+    process.env.CONTENT_SITE_BANNER_IMAGE,
+    process.env.CONTENT_SITE_BANNER_POSITION,
+    process.env.CONTENT_SITE_BANNER_SIZE,
+  ].some((value) => Boolean(value?.trim()));
+
+  if (!hasBannerConfig && !hasBannerEnv) {
+    return undefined;
+  }
+
+  const banner = {
+    eyebrow: optionalText(process.env.CONTENT_SITE_BANNER_EYEBROW || config.banner?.eyebrow),
+    title: optionalText(process.env.CONTENT_SITE_BANNER_TITLE || config.banner?.title) || siteTitle,
+    text: optionalText(process.env.CONTENT_SITE_BANNER_TEXT || config.banner?.text),
+    backgroundImage: optionalText(process.env.CONTENT_SITE_BANNER_IMAGE || config.banner?.backgroundImage),
+    backgroundPosition: optionalText(process.env.CONTENT_SITE_BANNER_POSITION || config.banner?.backgroundPosition),
+    backgroundSize: optionalText(process.env.CONTENT_SITE_BANNER_SIZE || config.banner?.backgroundSize),
+  };
+
+  return banner;
+}
+
+function hasAuthorContent(author: SiteAuthor | undefined) {
+  return Boolean(
+    author?.name?.trim() ||
+      author?.bio?.trim() ||
+      (author?.links && author.links.length > 0),
+  );
+}
+
+function cleanAuthor(author: SiteAuthor): SiteAuthor {
   return {
-    eyebrow: process.env.CONTENT_SITE_BANNER_EYEBROW || config.banner?.eyebrow || 'Family archive',
-    title: process.env.CONTENT_SITE_BANNER_TITLE || config.banner?.title || siteTitle,
-    text:
-      process.env.CONTENT_SITE_BANNER_TEXT ||
-      config.banner?.text ||
-      'Posts, stories, galleries, and images from the family archive, rebuilt from Markdown and structured media.',
-    backgroundImage: process.env.CONTENT_SITE_BANNER_IMAGE || config.banner?.backgroundImage,
-    backgroundPosition: process.env.CONTENT_SITE_BANNER_POSITION || config.banner?.backgroundPosition || 'center',
-    backgroundSize: process.env.CONTENT_SITE_BANNER_SIZE || config.banner?.backgroundSize || 'cover',
+    name: optionalText(author.name),
+    bio: optionalText(author.bio),
+    imageUrl: optionalText(author.imageUrl),
+    links: author.links?.filter((link) => link.label?.trim() && link.href?.trim()),
   };
 }
 

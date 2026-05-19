@@ -22,31 +22,33 @@ export function HomePage() {
   const summary = state.data;
   const site = summary.site ?? { title: 'sysop71.com' };
   const author = site.author;
-  const banner = site.banner ?? {};
+  const banner = site.banner;
   const recentUpdates = summary.recentEntries.slice(0, 5);
   const recentImages = summary.recentImages.slice(0, 10);
 
   return (
     <main className="home-layout page--landing">
-      <section className="home-banner" aria-labelledby="home-title" style={bannerStyle(banner)}>
-        <div className="home-banner__inner">
-          {banner.eyebrow ? <p className="eyebrow">{banner.eyebrow}</p> : null}
-          <h1 id="home-title">{banner.title || site.title}</h1>
-          {banner.text ? <p>{banner.text}</p> : null}
-        </div>
-      </section>
+      {banner ? (
+        <section className="home-banner" aria-labelledby="home-title" style={bannerStyle(banner)}>
+          <div className="home-banner__inner">
+            {banner.eyebrow ? <p className="eyebrow">{banner.eyebrow}</p> : null}
+            <h1 id="home-title">{banner.title || site.title}</h1>
+            {banner.text ? <p>{banner.text}</p> : null}
+          </div>
+        </section>
+      ) : null}
 
       <section className="page page--archive page--home home-body" aria-label="Archive overview">
         <aside className="archive-rail archive-rail--left">
-          {author ? (
+          {hasAuthorContent(author) ? (
             <section className="author-card" aria-label="Author information">
-              {author.imageUrl ? <img src={author.imageUrl} alt={author.name} /> : null}
+              {author?.imageUrl ? <img src={author.imageUrl} alt={author.name || ''} /> : null}
               <div>
                 <p className="eyebrow">Author</p>
-                <h2>{author.name}</h2>
-                {author.bio ? <p>{author.bio}</p> : null}
+                {author?.name ? <h2>{author.name}</h2> : null}
+                {author?.bio ? <p>{author.bio}</p> : null}
               </div>
-              {author.links && author.links.length > 0 ? (
+              {author?.links && author.links.length > 0 ? (
                 <nav aria-label="Author links">
                   {author.links.map((link, index) => (
                     <a key={link.href} href={link.href} target="_blank" rel="noreferrer">
@@ -99,4 +101,8 @@ function bannerStyle(banner: SiteBanner): CSSProperties {
     backgroundPosition: banner.backgroundPosition || 'center',
     backgroundSize: banner.backgroundSize || 'cover',
   };
+}
+
+function hasAuthorContent(author: { name?: string; bio?: string; imageUrl?: string; links?: unknown[] } | undefined) {
+  return Boolean(author?.name || author?.bio || (author?.links && author.links.length > 0));
 }
