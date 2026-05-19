@@ -5,14 +5,11 @@
   "nav": [
     { "label": "Home", "href": "/" },
     { "label": "Posts", "href": "/posts" },
-    { "label": "Stories", "href": "/stories" },
-    { "label": "Galleries", "href": "/galleries" },
-    { "label": "Images", "href": "/images" },
     { "label": "Search", "href": "/search" }
   ],
   "author": {
     "name": "",
-    "imageUrl": "/assets/images/bio-photo.jpg"
+    "imageUrl": ""
   },
   "footer": {
     "brandText": "sysop71.com"
