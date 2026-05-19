@@ -52,9 +52,10 @@ jobs:
 
       - name: Upload generated content
         run: |
+          STORAGE_ACCOUNT="${{ vars.CONTENT_STORAGE_ACCOUNT }}"
           az storage blob upload-batch \
             --auth-mode login \
-            --account-name "${{ vars.CONTENT_STORAGE_ACCOUNT || 'prdwebappstorage' }}" \
+            --account-name "${STORAGE_ACCOUNT:-prdwebappstorage}" \
             --destination "${{ vars.CONTENT_STORAGE_CONTAINER }}" \
             --source public/content \
             --destination-path "${{ vars.CONTENT_STORAGE_PREFIX }}" \
@@ -62,9 +63,10 @@ jobs:
 
       - name: Upload media from assets
         run: |
+          STORAGE_ACCOUNT="${{ vars.CONTENT_STORAGE_ACCOUNT }}"
           az storage blob upload-batch \
             --auth-mode login \
-            --account-name "${{ vars.CONTENT_STORAGE_ACCOUNT || 'prdwebappstorage' }}" \
+            --account-name "${STORAGE_ACCOUNT:-prdwebappstorage}" \
             --destination "${{ vars.CONTENT_STORAGE_CONTAINER }}" \
             --source assets \
             --destination-path images \
