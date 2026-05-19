@@ -5,16 +5,20 @@ slug: overwatch2-january-28-patch
 post_id: 2025-01-29-overwatch2-january-28-patch
 date: '2025-01-29 00:00:00 -0600'
 status: published
-authors: []
-summary: ''
+authors:
+  - Jeff Patton
+summary: >-
+  Blizzard has bots in Overwatch 2's Quick Play to create a smoother experience for brandnew players. For their first
+  five matches, new players may face AI opponents instead of real ones, allowing them to learn the game mechanics,
+  experiment
 categories:
-  - blog
+  - Blog
 hashtags:
-  - overwatch2
-  - patchnotes
-  - gamingnews
   - gamerlife
   - gamingcommunity
+  - gamingnews
+  - overwatch2
+  - patchnotes
 people: []
 locations: []
 cover_image: ''
@@ -23,7 +27,7 @@ related: []
 legacy:
   source: jekyll
 ---
-![Overwatch2 Quickplay Bots](https://images.blz-contentstack.com/v3/assets/blt2477dcaf4ebd440c/blta12828c588a192aa/5cf15dedcf7aa6330ac66a05/wrecking-ball-screenshot-004.jpg?auto=webp)
+[Overwatch2 Quickplay Bots](https://images.blz-contentstack.com/v3/assets/blt2477dcaf4ebd440c/blta12828c588a192aa/5cf15dedcf7aa6330ac66a05/wrecking-ball-screenshot-004.jpg?auto=webp)
 
 Blizzard has [introduced AI-controlled](https://overwatch.blizzard.com/en-us/news/patch-notes/#patch-2025-01-28) bots in Overwatch 2's Quick Play to create a smoother experience for brand-new players. For their first five matches, new players may face AI opponents instead of real ones, allowing them to learn the game mechanics, experiment with heroes, and get comfortable with gameplay flow before diving into full PvP lobbies. This change is designed to reduce frustration for newcomers who might otherwise be placed against far more experienced opponents, especially those using alternate accounts (smurfing).
 

@@ -5,16 +5,20 @@ slug: symmetra-teleports
 post_id: 2024-04-28-symmetra-teleports
 date: '2024-04-28 00:00:00 -0600'
 status: published
-authors: []
-summary: ''
+authors:
+  - Jeff Patton
+summary: >-
+  Symmetra, a Damage character in Overwatch 2, wields a unique weapon the photon beam and deploys sentry turrets as her
+  secondary weapon. However, her most distinctive feature is the Teleporter, a gamechanging tool that enables her and
+  her te
 categories:
-  - blog
+  - Blog
 hashtags:
-  - overwatch2
-  - symmetra
-  - gamingnews
   - gamerlife
   - gamingcommunity
+  - gamingnews
+  - overwatch2
+  - symmetra
 people: []
 locations: []
 cover_image: ''

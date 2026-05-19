@@ -5,16 +5,20 @@ slug: minecraft-january-drops
 post_id: 2025-01-29-minecraft-january-drops
 date: '2025-01-29 00:00:00 -0600'
 status: published
-authors: []
-summary: ''
+authors:
+  - Jeff Patton
+summary: >-
+  Hey, Minecrafters! The first significant drop of 2025 is almost here, and trust me, you'll love it. We're introducing
+  two adorable new cow variants that will add diversity to your farms, a sparkling bush that will light up your nights,
+  and
 categories:
-  - blog
+  - Blog
 hashtags:
-  - minecraft
   - drops
-  - gamingnews
   - gamerlife
   - gamingcommunity
+  - gamingnews
+  - minecraft
 people: []
 locations: []
 cover_image: ''
@@ -23,7 +27,7 @@ related: []
 legacy:
   source: jekyll
 ---
-![Minecraft January Drops](https://www.minecraft.net/content/dam/minecraftnet/games/minecraft/game-updates/Minecraft_sp25_testing_jan29_.Det_Blog_Editorial_EditorialExclusive_1_1170x500.jpg)
+[Minecraft January Drops](https://www.minecraft.net/content/dam/minecraftnet/games/minecraft/game-updates/Minecraft_sp25_testing_jan29_.Det_Blog_Editorial_EditorialExclusive_1_1170x500.jpg)
 
 ## January Minecraft Drops: Fresh Mobs, Glowing Plants, and Desert Tunes
 

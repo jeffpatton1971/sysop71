@@ -5,15 +5,19 @@ slug: tank-buffs
 post_id: 2024-07-09-tank-buffs
 date: '2024-07-09 00:00:00 -0600'
 status: published
-authors: []
-summary: ''
+authors:
+  - Jeff Patton
+summary: >-
+  Since the end of Season 8, the Overwatch community has been buzzing about the evolving role of the Tank. A common
+  consensus among players and developers is that tanks no longer feel as durable as they once did. This often forces
+  both Suppor
 categories:
-  - blog
+  - Blog
 hashtags:
-  - overwatch2
-  - gamingnews
   - gamerlife
   - gamingcommunity
+  - gamingnews
+  - overwatch2
 people: []
 locations: []
 cover_image: ''

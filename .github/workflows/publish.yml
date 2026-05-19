@@ -1,79 +1,406 @@
 name: Publish
 
 on:
-  workflow_dispatch:
   push:
     branches:
       - main
+    tags:
+      - '*'
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: Publish mode
+        required: true
+        default: full
+        type: choice
+        options:
+          - full
 
 permissions:
   contents: write
   id-token: write
 
+env:
+  CONTENT_SITE_KEY: ${{ vars.CONTENT_SITE_KEY }}
+  CONTENT_SITE_URL: ${{ vars.CONTENT_SITE_URL || vars.AZURE_WEBAPP_URL }}
+  AZURE_WEBAPP_NAME: ${{ vars.AZURE_WEBAPP_NAME }}
+  AZURE_WEBAPP_RESOURCE_GROUP: ${{ vars.AZURE_WEBAPP_RESOURCE_GROUP }}
+  AZURE_WEBAPP_URL: ${{ vars.AZURE_WEBAPP_URL || format('https://{0}.azurewebsites.net', vars.AZURE_WEBAPP_NAME) }}
+  VITE_API_BASE_URL: ${{ vars.VITE_API_BASE_URL || vars.AZURE_API_BASE_URL }}
+  VITE_API_SITE_ID: ${{ vars.VITE_API_SITE_ID || vars.CONTENT_SITE_KEY }}
+  REQUIRE_API_VERIFICATION: ${{ vars.REQUIRE_API_VERIFICATION || 'false' }}
+  CONTENT_STORAGE_ACCOUNT: ${{ vars.CONTENT_STORAGE_ACCOUNT }}
+  CONTENT_STORAGE_CONTAINER: ${{ vars.CONTENT_STORAGE_CONTAINER }}
+  CONTENT_STORAGE_PREFIX: ${{ vars.CONTENT_STORAGE_PREFIX }}
+
 jobs:
-  publish:
+  incremental-main:
+    name: Incremental publish
+    if: github.event_name == 'push' && github.ref_type == 'branch'
     runs-on: ubuntu-latest
-    environment: Production
+    environment:
+      name: Production
+      url: ${{ vars.AZURE_WEBAPP_URL || format('https://{0}.azurewebsites.net', vars.AZURE_WEBAPP_NAME) }}
+    concurrency:
+      group: publish-${{ github.ref_name }}
+      cancel-in-progress: false
+    env:
+      PUBLISH_PLAN_BASE: ${{ github.event.before }}
+      PUBLISH_PLAN_HEAD: ${{ github.sha }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
 
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: 22
           cache: npm
+          cache-dependency-path: package-lock.json
 
-      - name: Install
+      - name: Install site dependencies
         run: npm ci
+
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
+
+      - name: Validate Web App deployment settings
+        shell: bash
+        run: |
+          if [[ -z "${AZURE_WEBAPP_NAME:-}" ]]; then
+            echo "AZURE_WEBAPP_NAME must be set as a GitHub Actions variable."
+            exit 1
+          fi
+
+          if [[ -z "${AZURE_WEBAPP_RESOURCE_GROUP:-}" ]]; then
+            echo "AZURE_WEBAPP_RESOURCE_GROUP must be set as a GitHub Actions variable."
+            exit 1
+          fi
+
+          if [[ -n "${AZURE_WEBAPP_URL:-}" && ! "$AZURE_WEBAPP_URL" =~ ^https?:// ]]; then
+            AZURE_WEBAPP_URL="https://$AZURE_WEBAPP_URL"
+            echo "AZURE_WEBAPP_URL=$AZURE_WEBAPP_URL" >> "$GITHUB_ENV"
+            echo "Normalized AZURE_WEBAPP_URL to $AZURE_WEBAPP_URL"
+          fi
+
+          if [[ -z "${VITE_API_BASE_URL:-}" ]]; then
+            echo "Set VITE_API_BASE_URL or AZURE_API_BASE_URL as a GitHub Actions variable."
+            echo "The React site is deployed separately from the shared API. Set the shared API host explicitly."
+            exit 1
+          fi
+
+          if [[ -z "${VITE_API_SITE_ID:-}" ]]; then
+            echo "Set VITE_API_SITE_ID or CONTENT_SITE_KEY as a GitHub Actions variable."
+            echo "The shared API requires explicit site-id routes, for example /api/sysop71/home."
+            exit 1
+          fi
 
       - name: Validate content
         run: npm run content:validate
 
-      - name: Build
-        run: npm run build
-        env:
-          VITE_API_BASE_URL: ${{ vars.VITE_API_BASE_URL }}
-          VITE_API_SITE_ID: ${{ vars.VITE_API_SITE_ID }}
+      - name: Run tests
+        run: npm run test
 
-      - name: Azure Login (OIDC)
+      - name: Azure login
         uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      - name: Deploy frontend web app
-        uses: azure/webapps-deploy@v3
+      - name: Verify Azure Web App access
+        shell: bash
+        run: |
+          az webapp show \
+            --name "$AZURE_WEBAPP_NAME" \
+            --resource-group "$AZURE_WEBAPP_RESOURCE_GROUP" \
+            --query '{name:name, resourceGroup:resourceGroup, defaultHostName:defaultHostName, state:state}' \
+            --output json
+
+      - name: Plan incremental publish
+        run: npm run publish:plan
+
+      - name: Publish planned media
+        run: npm run publish:media
+
+      - name: Rewrite source media references
+        run: npm run publish:prepare
+
+      - name: Preview local draft media cleanup
+        run: npm run publish:cleanup-media
+
+      - name: Remove uploaded local draft media
+        run: npm run publish:cleanup-media:write
+
+      - name: Commit publish source updates
+        shell: bash
+        run: |
+          if [[ -z "$(git status --porcelain -- _posts content/media/index.json)" ]]; then
+            echo "No source publish updates to commit."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A -- _posts content/media/index.json
+          git commit -m "Normalize published media references [skip ci]"
+          git push
+
+      - name: Publish planned generated content
+        run: npm run publish:content:incremental
+
+      - name: Build site
+        run: npm run build
+
+      - name: Prepare Azure Web App package
+        shell: bash
+        run: |
+          rm -rf .tmp/webapp-package
+          mkdir -p .tmp/webapp-package/public
+          cp -R dist/. .tmp/webapp-package/public/
+          cp webapp/package.json webapp/server.cjs .tmp/webapp-package/
+
+      - name: Deploy Azure Web App
+        uses: Azure/webapps-deploy@v3
         with:
           app-name: ${{ vars.AZURE_WEBAPP_NAME }}
           resource-group-name: ${{ vars.AZURE_WEBAPP_RESOURCE_GROUP }}
-          package: .
+          slot-name: ${{ vars.AZURE_WEBAPP_SLOT_NAME || 'production' }}
+          package: .tmp/webapp-package
 
-      - name: Upload generated content
+      - name: Verify deployed site
+        shell: bash
         run: |
-          STORAGE_ACCOUNT="${{ vars.CONTENT_STORAGE_ACCOUNT }}"
-          az storage blob upload-batch \
-            --auth-mode login \
-            --account-name "${STORAGE_ACCOUNT:-prdwebappstorage}" \
-            --destination "${{ vars.CONTENT_STORAGE_CONTAINER }}" \
-            --source public/content \
-            --destination-path "${{ vars.CONTENT_STORAGE_PREFIX }}" \
-            --overwrite true
+          site_url="${AZURE_WEBAPP_URL%/}"
 
-      - name: Upload media from assets
-        run: |
-          STORAGE_ACCOUNT="${{ vars.CONTENT_STORAGE_ACCOUNT }}"
-          az storage blob upload-batch \
-            --auth-mode login \
-            --account-name "${STORAGE_ACCOUNT:-prdwebappstorage}" \
-            --destination "${{ vars.CONTENT_STORAGE_CONTAINER }}" \
-            --source assets \
-            --destination-path images \
-            --overwrite true
+          for attempt in {1..12}; do
+            status="$(curl -sS -o /tmp/webapp-home.html -w '%{http_code}' "$site_url/" || true)"
+            posts_status="$(curl -sS -o /tmp/webapp-posts.html -w '%{http_code}' "$site_url/posts" || true)"
 
-      - name: API verification gate
-        if: ${{ vars.REQUIRE_API_VERIFICATION == 'true' }}
+            if [[ "$status" == "200" && "$posts_status" == "200" ]]; then
+              echo "Verified $site_url/ and direct React route refresh at $site_url/posts"
+              exit 0
+            fi
+
+            echo "Attempt $attempt: / returned $status and /posts returned $posts_status"
+            sleep 10
+          done
+
+          echo "Final / response:"
+          cat /tmp/webapp-home.html || true
+          echo
+          echo "Final /posts response:"
+          cat /tmp/webapp-posts.html || true
+          exit 1
+
+      - name: Check external API
+        shell: bash
         run: |
-          curl --fail "${{ vars.AZURE_API_BASE_URL }}/api/${{ vars.CONTENT_SITE_KEY }}/health"
-          curl --fail "${{ vars.AZURE_API_BASE_URL }}/api/${{ vars.CONTENT_SITE_KEY }}/home"
+          api_base="${VITE_API_BASE_URL}"
+          api_base="${api_base%/}"
+          require_api="$(echo "${REQUIRE_API_VERIFICATION:-false}" | tr '[:upper:]' '[:lower:]')"
+
+          for attempt in {1..12}; do
+            status="$(curl -sS -o /tmp/swa-home.json -w '%{http_code}' "$api_base/api/${VITE_API_SITE_ID}/home" || true)"
+            if [[ "$status" == "200" ]]; then
+              echo "Verified $api_base/api/${VITE_API_SITE_ID}/home"
+              detail_status="$(curl -sS -o /tmp/swa-story.json -w '%{http_code}' "$api_base/api/${VITE_API_SITE_ID}/stories/2026/04/16/194804-better-late-than-never" || true)"
+              if [[ "$detail_status" == "200" ]]; then
+                echo "Verified story detail API"
+                exit 0
+              fi
+
+              echo "Story detail API returned $detail_status"
+              cat /tmp/swa-story.json || true
+              exit 1
+            fi
+
+            echo "Attempt $attempt: /api/${VITE_API_SITE_ID}/home returned $status"
+            sleep 10
+          done
+
+          echo "Final /api/${VITE_API_SITE_ID}/home response:"
+          cat /tmp/swa-home.json || true
+          echo
+          echo "Final /api/${VITE_API_SITE_ID}/health response:"
+          curl -sS "$api_base/api/${VITE_API_SITE_ID}/health" || true
+
+          if [[ "$require_api" == "true" ]]; then
+            exit 1
+          fi
+
+          echo "::warning::External API verification failed for $api_base, but REQUIRE_API_VERIFICATION is not true. Frontend deployment is complete; deploy or repair the shared API from its own repository."
+          exit 0
+
+  full-tag:
+    name: Full rebuild publish
+    if: github.ref_type == 'tag' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    environment:
+      name: Production
+      url: ${{ vars.AZURE_WEBAPP_URL || format('https://{0}.azurewebsites.net', vars.AZURE_WEBAPP_NAME) }}
+    concurrency:
+      group: publish-full-${{ github.ref_name }}
+      cancel-in-progress: false
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Install site dependencies
+        run: npm ci
+
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
+
+      - name: Validate Web App deployment settings
+        shell: bash
+        run: |
+          if [[ -z "${AZURE_WEBAPP_NAME:-}" ]]; then
+            echo "AZURE_WEBAPP_NAME must be set as a GitHub Actions variable."
+            exit 1
+          fi
+
+          if [[ -z "${AZURE_WEBAPP_RESOURCE_GROUP:-}" ]]; then
+            echo "AZURE_WEBAPP_RESOURCE_GROUP must be set as a GitHub Actions variable."
+            exit 1
+          fi
+
+          if [[ -n "${AZURE_WEBAPP_URL:-}" && ! "$AZURE_WEBAPP_URL" =~ ^https?:// ]]; then
+            AZURE_WEBAPP_URL="https://$AZURE_WEBAPP_URL"
+            echo "AZURE_WEBAPP_URL=$AZURE_WEBAPP_URL" >> "$GITHUB_ENV"
+            echo "Normalized AZURE_WEBAPP_URL to $AZURE_WEBAPP_URL"
+          fi
+
+          if [[ -z "${VITE_API_BASE_URL:-}" ]]; then
+            echo "Set VITE_API_BASE_URL or AZURE_API_BASE_URL as a GitHub Actions variable."
+            echo "The React site is deployed separately from the shared API. Set the shared API host explicitly."
+            exit 1
+          fi
+
+          if [[ -z "${VITE_API_SITE_ID:-}" ]]; then
+            echo "Set VITE_API_SITE_ID or CONTENT_SITE_KEY as a GitHub Actions variable."
+            echo "The shared API requires explicit site-id routes, for example /api/sysop71/home."
+            exit 1
+          fi
+
+      - name: Validate content
+        run: npm run content:validate
+
+      - name: Run tests
+        run: npm run test
+
+      - name: Azure login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Verify Azure Web App access
+        shell: bash
+        run: |
+          az webapp show \
+            --name "$AZURE_WEBAPP_NAME" \
+            --resource-group "$AZURE_WEBAPP_RESOURCE_GROUP" \
+            --query '{name:name, resourceGroup:resourceGroup, defaultHostName:defaultHostName, state:state}' \
+            --output json
+
+      - name: Publish full generated content
+        run: npm run publish:content
+
+      - name: Build site
+        run: npm run build
+
+      - name: Prepare Azure Web App package
+        shell: bash
+        run: |
+          rm -rf .tmp/webapp-package
+          mkdir -p .tmp/webapp-package/public
+          cp -R dist/. .tmp/webapp-package/public/
+          cp webapp/package.json webapp/server.cjs .tmp/webapp-package/
+
+      - name: Deploy Azure Web App
+        uses: Azure/webapps-deploy@v3
+        with:
+          app-name: ${{ vars.AZURE_WEBAPP_NAME }}
+          resource-group-name: ${{ vars.AZURE_WEBAPP_RESOURCE_GROUP }}
+          slot-name: ${{ vars.AZURE_WEBAPP_SLOT_NAME || 'production' }}
+          package: .tmp/webapp-package
+
+      - name: Verify deployed site
+        shell: bash
+        run: |
+          site_url="${AZURE_WEBAPP_URL%/}"
+
+          for attempt in {1..12}; do
+            status="$(curl -sS -o /tmp/webapp-home.html -w '%{http_code}' "$site_url/" || true)"
+            posts_status="$(curl -sS -o /tmp/webapp-posts.html -w '%{http_code}' "$site_url/posts" || true)"
+
+            if [[ "$status" == "200" && "$posts_status" == "200" ]]; then
+              echo "Verified $site_url/ and direct React route refresh at $site_url/posts"
+              exit 0
+            fi
+
+            echo "Attempt $attempt: / returned $status and /posts returned $posts_status"
+            sleep 10
+          done
+
+          echo "Final / response:"
+          cat /tmp/webapp-home.html || true
+          echo
+          echo "Final /posts response:"
+          cat /tmp/webapp-posts.html || true
+          exit 1
+
+      - name: Check external API
+        shell: bash
+        run: |
+          api_base="${VITE_API_BASE_URL}"
+          api_base="${api_base%/}"
+          require_api="$(echo "${REQUIRE_API_VERIFICATION:-false}" | tr '[:upper:]' '[:lower:]')"
+
+          for attempt in {1..12}; do
+            status="$(curl -sS -o /tmp/swa-home.json -w '%{http_code}' "$api_base/api/${VITE_API_SITE_ID}/home" || true)"
+            if [[ "$status" == "200" ]]; then
+              echo "Verified $api_base/api/${VITE_API_SITE_ID}/home"
+              detail_status="$(curl -sS -o /tmp/swa-story.json -w '%{http_code}' "$api_base/api/${VITE_API_SITE_ID}/stories/2026/04/16/194804-better-late-than-never" || true)"
+              if [[ "$detail_status" == "200" ]]; then
+                echo "Verified story detail API"
+                exit 0
+              fi
+
+              echo "Story detail API returned $detail_status"
+              cat /tmp/swa-story.json || true
+              exit 1
+            fi
+
+            echo "Attempt $attempt: /api/${VITE_API_SITE_ID}/home returned $status"
+            sleep 10
+          done
+
+          echo "Final /api/${VITE_API_SITE_ID}/home response:"
+          cat /tmp/swa-home.json || true
+          echo
+          echo "Final /api/${VITE_API_SITE_ID}/health response:"
+          curl -sS "$api_base/api/${VITE_API_SITE_ID}/health" || true
+
+          if [[ "$require_api" == "true" ]]; then
+            exit 1
+          fi
+
+          echo "::warning::External API verification failed for $api_base, but REQUIRE_API_VERIFICATION is not true. Frontend deployment is complete; deploy or repair the shared API from its own repository."
+          exit 0

@@ -5,17 +5,21 @@ slug: overwatch2-directors-take-february
 post_id: 2025-02-03-overwatch2-directors-take-february
 date: '2025-02-03 00:00:00 -0600'
 status: published
-authors: []
-summary: ''
+authors:
+  - Jeff Patton
+summary: >-
+  Season 15 is just around the corner, and the buzz is real. The team is building on last year's wins—from rebalanced
+  gameplay to a fresh competitive system—and there's even a hint of something big coming during Overwatch 2 Spotlight
+  that you
 categories:
-  - blog
+  - Blog
 hashtags:
-  - overwatch2
   - directorstake
-  - overwatchcompetitive
-  - gamingnews
   - gamerlife
   - gamingcommunity
+  - gamingnews
+  - overwatch2
+  - overwatchcompetitive
 people: []
 locations: []
 cover_image: ''
@@ -24,7 +28,7 @@ related: []
 legacy:
   source: jekyll
 ---
-![Directors Take](https://bnetcmsus-a.akamaihd.net/cms/blog_header/k5/K50EETYT5LPR1738206855553.png)
+[Directors Take](https://bnetcmsus-a.akamaihd.net/cms/blog_header/k5/K50EETYT5LPR1738206855553.png)
 
 Season 15 is just around the corner, and the buzz is real. The team is building on last year's wins—from rebalanced gameplay to a fresh competitive system—and there's even a hint of something big coming during Overwatch 2 Spotlight that you won't want to miss.
 

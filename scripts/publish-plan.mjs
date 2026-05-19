@@ -1,6 +1,0 @@
-console.log('Publish plan:')
-console.log('- Validate content: npm run content:validate')
-console.log('- Build site + generated content: npm run build')
-console.log('- Dry-run content upload: npm run publish:content:dry-run')
-console.log('- Dry-run media upload: npm run publish:media:dry-run')
-console.log('- Upload media/content in CI publish workflow with Azure OIDC')

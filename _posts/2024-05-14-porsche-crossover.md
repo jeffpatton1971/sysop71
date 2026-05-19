@@ -5,16 +5,20 @@ slug: porsche-crossover
 post_id: 2024-05-14-porsche-crossover
 date: '2024-05-14 00:00:00 -0600'
 status: published
-authors: []
-summary: ''
+authors:
+  - Jeff Patton
+summary: >-
+  repare to be amazed as the Overwatch 2 and Porsche collaboration event, a groundbreaking fusion of gaming and
+  automotive excellence, commences on May 14, 2024. This innovative collaboration, a testament to Blizzard
+  Entertainment's creative
 categories:
-  - blog
+  - Blog
 hashtags:
-  - overwatch2
-  - porschecrossover
-  - gamingnews
   - gamerlife
   - gamingcommunity
+  - gamingnews
+  - overwatch2
+  - porschecrossover
 people: []
 locations: []
 cover_image: ''

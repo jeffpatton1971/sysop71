@@ -1,0 +1,13 @@
+{
+  "name": "sysop71-webapp-host",
+  "version": "0.1.0",
+  "private": true,
+  "type": "commonjs",
+  "engines": {
+    "node": "22.x"
+  },
+  "main": "server.cjs",
+  "scripts": {
+    "start": "node server.cjs"
+  }
+}

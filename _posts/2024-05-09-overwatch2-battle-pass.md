@@ -5,16 +5,20 @@ slug: overwatch2-battle-pass
 post_id: 2024-05-09-overwatch2-battle-pass
 date: '2024-05-09 00:00:00 -0600'
 status: published
-authors: []
-summary: ''
+authors:
+  - Jeff Patton
+summary: >-
+  Overwatch 2, Fortnite, and Destiny 2 each feature a battle pass system to enhance player engagement and monetization.
+  Fortnite, known for popularizing the battle pass model, continues to offer seasonal passes filled with cosmetics and
+  gamep
 categories:
-  - blog
+  - Blog
 hashtags:
-  - overwatch2
   - battlepass
-  - gamingnews
   - gamerlife
   - gamingcommunity
+  - gamingnews
+  - overwatch2
 people: []
 locations: []
 cover_image: ''

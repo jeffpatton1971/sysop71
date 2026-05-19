@@ -5,13 +5,13 @@ slug: minecraft-series
 post_id: 2025-08-05-minecraft-series
 date: '2025-08-05'
 status: published
-authors: []
-summary: ''
+authors:
+  - Jeff Patton
+summary: Starting something new this week.
 categories:
   - Minecraft
   - Streaming
-  - YouTube
-hashtags: []
+  - Youtube
 people: []
 locations: []
 cover_image: ''

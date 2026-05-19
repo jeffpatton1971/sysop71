@@ -5,17 +5,21 @@ slug: perfect-seed-selected
 post_id: 2025-08-06-perfect-seed-selected
 date: '2025-08-06'
 status: published
-authors: []
-summary: ''
+authors:
+  - Jeff Patton
+summary: >-
+  Stream 1 is complete — here's how I found the perfect seed for Season 1, and why this spot is going to be home. The
+  first stream of Season 1 is in the books, and it was all about one thing: finding the perfect seed to kick off this
+  world ri
 categories:
-  - minecraft
-  - survival-series
-  - stream-recap
+  - Minecraft
+  - Stream-Recap
+  - Survival-Series
 hashtags:
-  - seedselection
-  - stream
   - lonelymountain
   - season1
+  - seedselection
+  - stream
 people: []
 locations: []
 cover_image: ''

@@ -5,16 +5,20 @@ slug: what-is-countering
 post_id: 2024-05-02-what-is-countering
 date: '2024-05-02 00:00:00 -0600'
 status: published
-authors: []
-summary: ''
+authors:
+  - Jeff Patton
+summary: >-
+  In Overwatch, mastering hero matchups is crucial and can radically swing the game's momentum. For instance,
+  understanding how a hero like Reaper can counter a tank like Reinhardt or how a nimble hero like Tracer can disrupt a
+  healer like Me
 categories:
-  - blog
+  - Blog
 hashtags:
-  - overwatch2
-  - tipsandtricks
-  - gamingnews
   - gamerlife
   - gamingcommunity
+  - gamingnews
+  - overwatch2
+  - tipsandtricks
 people: []
 locations: []
 cover_image: ''

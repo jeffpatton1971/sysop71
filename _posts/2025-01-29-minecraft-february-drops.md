@@ -5,16 +5,20 @@ slug: minecraft-february-drops
 post_id: 2025-01-29-minecraft-february-drops
 date: '2025-02-05 00:00:00 -0600'
 status: published
-authors: []
-summary: ''
+authors:
+  - Jeff Patton
+summary: >-
+  Minecraft players, get ready to dive into the whimsical world of the first game update of 2025. This update brings a
+  delightful assortment of new features to test in both Java snapshot and Bedrock beta/preview versions. The changes are
+  just
 categories:
-  - blog
+  - Blog
 hashtags:
-  - minecraft
   - drops
-  - gamingnews
   - gamerlife
   - gamingcommunity
+  - gamingnews
+  - minecraft
 people: []
 locations: []
 cover_image: ''
@@ -23,7 +27,7 @@ related: []
 legacy:
   source: jekyll
 ---
-![Minecraft February Drops](https://www.minecraft.net/content/dam/minecraftnet/games/minecraft/game-updates/MCV_SpringDrop_testing_Jan8_Editorial_Exclusive_DotNet_1170x500.jpg)
+[Minecraft February Drops](https://www.minecraft.net/content/dam/minecraftnet/games/minecraft/game-updates/MCV_SpringDrop_testing_Jan8_Editorial_Exclusive_DotNet_1170x500.jpg)
 
 ## February Minecraft Drops: Chickens and Cactus Flowers
 

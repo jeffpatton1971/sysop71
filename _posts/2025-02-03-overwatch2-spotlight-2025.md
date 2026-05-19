@@ -5,17 +5,20 @@ slug: overwatch2-spotlight-2025
 post_id: 2025-02-03-overwatch2-spotlight-2025
 date: '2025-02-12 00:00:00 -0600'
 status: published
-authors: []
-summary: ''
+authors:
+  - Jeff Patton
+summary: >-
+  The Overwatch2 spotlight just concluded, and I will give you a breakdown of everything covered. There was a lot of
+  ground covered and some teases for future seasons, but quickly, let's hit the highlights.
 categories:
-  - blog
+  - Blog
 hashtags:
-  - overwatch2
-  - spotlight
-  - overwatchseason15
-  - gamingnews
   - gamerlife
   - gamingcommunity
+  - gamingnews
+  - overwatch2
+  - overwatchseason15
+  - spotlight
 people: []
 locations: []
 cover_image: ''
@@ -24,7 +27,7 @@ related: []
 legacy:
   source: jekyll
 ---
-![Overwatch2 Spotlight](https://bnetcmsus-a.akamaihd.net/cms/blog_header/l8/L87QFGZJNCSV1739380161755.png)
+[Overwatch2 Spotlight](https://bnetcmsus-a.akamaihd.net/cms/blog_header/l8/L87QFGZJNCSV1739380161755.png)
 
 The Overwatch2 spotlight just concluded, and I will give you a breakdown of everything covered. There was a lot of ground covered and some teases for future seasons, but quickly, let's hit the highlights.
 

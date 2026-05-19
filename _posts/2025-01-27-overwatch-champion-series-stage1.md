@@ -5,17 +5,21 @@ slug: overwatch-champion-series-stage1
 post_id: 2025-01-27-overwatch-champion-series-stage1
 date: '2025-01-27 00:00:00 -0600'
 status: published
-authors: []
-summary: ''
+authors:
+  - Jeff Patton
+summary: >-
+  The returns in 2025 with exciting updates designed to enhance the competitive scene and viewing experience. This
+  year’s format features four competitive regions: North America, EMEA, Asia, and China. Each region begins with an Open
+  Qualifie
 categories:
-  - blog
+  - Blog
 hashtags:
-  - overwatch2
-  - owcs
-  - gamingnews
   - esports
   - gamerlife
   - gamingcommunity
+  - gamingnews
+  - overwatch2
+  - owcs
 people: []
 locations: []
 cover_image: ''
@@ -24,7 +28,7 @@ related: []
 legacy:
   source: jekyll
 ---
-![Overwatch Champion Series (OWCS)](https://esports.overwatch.com/_next/image?&q=100&w=1920&url=https://a.storyblok.com/f/267720/1920x1080/7abb777c0f/stage1kbugheader.png)
+[Overwatch Champion Series (OWCS)](https://esports.overwatch.com/_next/image?&q=100&w=1920&url=https://a.storyblok.com/f/267720/1920x1080/7abb777c0f/stage1kbugheader.png)
 
 ## Overwatch Champion Series Stage 1
 

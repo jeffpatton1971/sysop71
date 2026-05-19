@@ -5,16 +5,20 @@ slug: mid-season-patch
 post_id: 2025-01-22-mid-season-patch
 date: '2025-01-22 00:00:00 -0600'
 status: published
-authors: []
-summary: ''
+authors:
+  - Jeff Patton
+summary: >-
+  The latest Overwatch 2 patch, released on January 21, 2025, brings exciting seasonal events, experimental game modes,
+  and impactful hero updates. The Year of the Snake Seasonal Event celebrates Lunar New Year with festive challenges. At
+  the
 categories:
-  - blog
+  - Blog
 hashtags:
-  - overwatch2
-  - patchnotes
-  - gamingnews
   - gamerlife
   - gamingcommunity
+  - gamingnews
+  - overwatch2
+  - patchnotes
 people: []
 locations: []
 cover_image: ''
@@ -23,7 +27,7 @@ related: []
 legacy:
   source: jekyll
 ---
-![Overwatch2 Mid-Season Patches](https://bnetcmsus-a.akamaihd.net/cms/blog_header/q1/Q1SQORBIZAAA1675992280286.png?)
+[Overwatch2 Mid-Season Patches](https://bnetcmsus-a.akamaihd.net/cms/blog_header/q1/Q1SQORBIZAAA1675992280286.png?)
 
 The latest Overwatch 2 patch, released on January 21, 2025, brings exciting seasonal events, experimental game modes, and impactful hero updates. The **Year of the Snake Seasonal Event** celebrates Lunar New Year with festive challenges. At the same time, the **Valentine's Day event** promises a Cupid Hanzo showdown. Gameplay nostalgia takes center stage with the **6v6 Experimental Mode** and the return of the **Overwatch Classic Moth Meta**. Hero updates and bug fixes ensure smoother gameplay and balance across standard modes.
 

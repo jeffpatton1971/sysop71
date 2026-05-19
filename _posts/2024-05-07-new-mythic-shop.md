@@ -5,16 +5,20 @@ slug: new-mythic-shop
 post_id: 2024-05-07-new-mythic-shop
 date: '2024-05-07 00:00:00 -0600'
 status: published
-authors: []
-summary: ''
+authors:
+  - Jeff Patton
+summary: >-
+  Starting in Season 10, Blizzard introduced the Mythic Shop for Overwatch 2 players. This shop allows players to get
+  Mythic skins from previous seasons they may have missed. On the face of it, this is a good idea, and for those willing
+  to do
 categories:
-  - blog
+  - Blog
 hashtags:
-  - overwatch2
-  - shop
-  - gamingnews
   - gamerlife
   - gamingcommunity
+  - gamingnews
+  - overwatch2
+  - shop
 people: []
 locations: []
 cover_image: ''
