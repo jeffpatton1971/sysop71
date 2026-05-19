@@ -208,14 +208,22 @@ jobs:
             status="$(curl -sS -o /tmp/swa-home.json -w '%{http_code}' "$api_base/api/${VITE_API_SITE_ID}/home" || true)"
             if [[ "$status" == "200" ]]; then
               echo "Verified $api_base/api/${VITE_API_SITE_ID}/home"
-              detail_status="$(curl -sS -o /tmp/swa-story.json -w '%{http_code}' "$api_base/api/${VITE_API_SITE_ID}/stories/2026/04/16/194804-better-late-than-never" || true)"
+              detail_route="$(node -e "const fs=require('fs'); const home=JSON.parse(fs.readFileSync('/tmp/swa-home.json','utf8')); const entry=(home.recentEntries||[]).find((item)=>item.route); process.stdout.write(entry?.route || '');")"
+
+              if [[ -z "$detail_route" ]]; then
+                echo "Home API returned no recent entry route to verify."
+                cat /tmp/swa-home.json || true
+                exit 1
+              fi
+
+              detail_status="$(curl -sS -o /tmp/swa-detail.json -w '%{http_code}' "$api_base/api/${VITE_API_SITE_ID}${detail_route}" || true)"
               if [[ "$detail_status" == "200" ]]; then
-                echo "Verified story detail API"
+                echo "Verified detail API at $api_base/api/${VITE_API_SITE_ID}${detail_route}"
                 exit 0
               fi
 
-              echo "Story detail API returned $detail_status"
-              cat /tmp/swa-story.json || true
+              echo "Detail API returned $detail_status for $detail_route"
+              cat /tmp/swa-detail.json || true
               exit 1
             fi
 
@@ -377,14 +385,22 @@ jobs:
             status="$(curl -sS -o /tmp/swa-home.json -w '%{http_code}' "$api_base/api/${VITE_API_SITE_ID}/home" || true)"
             if [[ "$status" == "200" ]]; then
               echo "Verified $api_base/api/${VITE_API_SITE_ID}/home"
-              detail_status="$(curl -sS -o /tmp/swa-story.json -w '%{http_code}' "$api_base/api/${VITE_API_SITE_ID}/stories/2026/04/16/194804-better-late-than-never" || true)"
+              detail_route="$(node -e "const fs=require('fs'); const home=JSON.parse(fs.readFileSync('/tmp/swa-home.json','utf8')); const entry=(home.recentEntries||[]).find((item)=>item.route); process.stdout.write(entry?.route || '');")"
+
+              if [[ -z "$detail_route" ]]; then
+                echo "Home API returned no recent entry route to verify."
+                cat /tmp/swa-home.json || true
+                exit 1
+              fi
+
+              detail_status="$(curl -sS -o /tmp/swa-detail.json -w '%{http_code}' "$api_base/api/${VITE_API_SITE_ID}${detail_route}" || true)"
               if [[ "$detail_status" == "200" ]]; then
-                echo "Verified story detail API"
+                echo "Verified detail API at $api_base/api/${VITE_API_SITE_ID}${detail_route}"
                 exit 0
               fi
 
-              echo "Story detail API returned $detail_status"
-              cat /tmp/swa-story.json || true
+              echo "Detail API returned $detail_status for $detail_route"
+              cat /tmp/swa-detail.json || true
               exit 1
             fi
 

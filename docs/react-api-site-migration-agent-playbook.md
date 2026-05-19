@@ -239,6 +239,13 @@ Preferred API setting:
 CONTENT_BASE_URL_TEMPLATE=https://<storage-account>.blob.core.windows.net/<container>/{site}/current/
 ```
 
+Important: if the API Function App still has legacy single-site settings such
+as `CONTENT_BASE_URL=https://.../kansaspattons/current/` and
+`CONTENT_SITE_KEY=kansaspattons`, it will continue serving only that one site
+unless a multi-site setting is also present. Add `CONTENT_BASE_URL_TEMPLATE` or
+`CONTENT_SITE_BASE_URLS` to the API Function App settings before expecting a new
+site id to work.
+
 If using a shared `sites` container and default prefix:
 
 ```text
@@ -731,6 +738,10 @@ npx playwright install chromium
 2. Configure GitHub `Production` environment secrets and variables.
 3. Configure Azure OIDC federated credential and RBAC.
 4. Configure `ptech-sites-api` so it can resolve this site id.
+   Confirm the live API health response reports `hasSiteBaseUrlTemplate: true`,
+   `hasSiteBaseUrlMap: true`, or `source: CONTENT_STORAGE_*` for multi-site
+   operation. If it only reports `source: CONTENT_BASE_URL`, the API is still
+   in legacy single-site mode.
 5. Run local validation commands.
 6. Push the migration branch and open a pull request.
 7. Confirm PR CI passes.
