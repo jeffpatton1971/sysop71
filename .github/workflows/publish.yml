@@ -54,7 +54,7 @@ jobs:
         run: |
           az storage blob upload-batch \
             --auth-mode login \
-            --account-name "${{ vars.CONTENT_STORAGE_ACCOUNT }}" \
+            --account-name "${{ vars.CONTENT_STORAGE_ACCOUNT || 'prdwebappstorage' }}" \
             --destination "${{ vars.CONTENT_STORAGE_CONTAINER }}" \
             --source public/content \
             --destination-path "${{ vars.CONTENT_STORAGE_PREFIX }}" \
@@ -64,7 +64,7 @@ jobs:
         run: |
           az storage blob upload-batch \
             --auth-mode login \
-            --account-name "${{ vars.CONTENT_STORAGE_ACCOUNT }}" \
+            --account-name "${{ vars.CONTENT_STORAGE_ACCOUNT || 'prdwebappstorage' }}" \
             --destination "${{ vars.CONTENT_STORAGE_CONTAINER }}" \
             --source assets \
             --destination-path images \
