@@ -19,7 +19,7 @@ test('manual diagnostic cannot execute the backfill job', () => {
   assert.equal(workflow.on.schedule, undefined);
 });
 
-for (const scenario of ['success', 'empty', 'missing-scope', 'broad-scope', 'wrong-channel', 'token-failure', 'analytics-failure']) {
+for (const scenario of ['success', 'empty', 'missing-scope', 'broad-scope', 'wrong-channel', 'token-failure', 'invalid-grant', 'analytics-failure']) {
   test(`connection check: ${scenario}`, () => {
     const summary = path.join(directory, `${scenario}.md`);
     const harness = path.join(directory, `${scenario}.ps1`);
@@ -33,6 +33,11 @@ for (const scenario of ['success', 'empty', 'missing-scope', 'broad-scope', 'wro
         param($Method, $Uri, $ContentType, $Body, $Headers)
         if ($Uri -eq 'https://oauth2.googleapis.com/token') {
           if ($env:SCENARIO -eq 'token-failure') { throw 'secret-client-value secret-refresh-value' }
+          if ($env:SCENARIO -eq 'invalid-grant') {
+            $errorRecord = [System.Management.Automation.ErrorRecord]::new([Exception]::new('secret-refresh-value'), 'mock', 'InvalidOperation', $null)
+            $errorRecord.ErrorDetails = [System.Management.Automation.ErrorDetails]::new('{"error":"invalid_grant","error_description":"secret-refresh-value"}')
+            throw $errorRecord
+          }
           return @{ access_token = 'secret-access-value' }
         }
         if ($Uri.StartsWith('https://oauth2.googleapis.com/tokeninfo?')) {
@@ -68,6 +73,7 @@ for (const scenario of ['success', 'empty', 'missing-scope', 'broad-scope', 'wro
     assert.equal(result.status, ['success', 'empty'].includes(scenario) ? 0 : 1, output);
     if (scenario === 'success') assert.match(text, /2 daily rows returned/);
     if (scenario === 'empty') assert.match(text, /Empty history is not proof of zero/);
+    if (scenario === 'invalid-grant') assert.match(text, /Google OAuth error: `invalid_grant`/);
     if (!['success', 'empty'].includes(scenario)) assert.match(text, /FAILED while/);
   });
 }

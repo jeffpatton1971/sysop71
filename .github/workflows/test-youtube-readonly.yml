@@ -106,9 +106,26 @@ jobs:
             $status = $null
             if ($_.Exception.Response) { $status = [int]$_.Exception.Response.StatusCode }
             $summary.Add("- FAILED while $stage$(if ($status) { " (HTTP $status)" }).")
+            if ($stage -eq 'exchanging the refresh token with Google') {
+              try {
+                $oauthError = ($_.ErrorDetails.Message | ConvertFrom-Json).error
+                $knownErrors = @{
+                  invalid_grant = 'Google rejected the refresh grant. It may be expired, revoked, or associated with a different client.'
+                  invalid_client = 'Google rejected the OAuth client authentication. Check the client ID and client secret.'
+                  unauthorized_client = 'This OAuth client is not authorized for this grant type.'
+                  invalid_scope = 'Google rejected the requested permission scope.'
+                  access_denied = 'Google denied authorization.'
+                  unsupported_grant_type = 'Google rejected the grant type.'
+                }
+                if ($oauthError -is [string] -and $knownErrors.ContainsKey($oauthError)) {
+                  $summary.Add("- Google OAuth error: ``$oauthError``. $($knownErrors[$oauthError])")
+                }
+              } catch { } # Never log unrecognized response content.
+            }
             $summary.Add('- Credentials and raw HTTP error bodies have been withheld from the logs.')
             Write-Host "::error::YouTube connection check failed while $stage. See the run summary."
             exit 1
           } finally {
             $summary -join "`n" | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append -Encoding utf8
+            foreach ($line in $summary) { Write-Host $line }
           }
