@@ -2,13 +2,26 @@ name: YouTube Backfill Metrics
 
 on:
   workflow_dispatch:
+    inputs:
+      check_connection_only:
+        description: Test read-only credentials without backfilling or writing data
+        type: boolean
+        default: false
 
 env:
   ACTIONS_RUNNER_DEBUG: false
   ACTIONS_STEP_DEBUG: false
 
 jobs:
+  check-connection:
+    if: ${{ inputs.check_connection_only }}
+    permissions:
+      contents: read
+    uses: ./.github/workflows/test-youtube-readonly.yml
+    secrets: inherit
+
   backfill-youtube-metrics:
+    if: ${{ !inputs.check_connection_only }}
     runs-on: windows-latest
 
     steps:
