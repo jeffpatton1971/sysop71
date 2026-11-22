@@ -11,6 +11,23 @@ on:
         description: Exchange the one-time Google authorization saved by the local helper
         type: boolean
         default: false
+      collect_reports:
+        description: Collect encrypted reports for the local collector
+        type: boolean
+        default: false
+      report_start:
+        type: string
+        default: ''
+      report_end:
+        type: string
+        default: ''
+      report_public_key:
+        description: Base64 public encryption key from the local collector
+        type: string
+        default: ''
+      report_request_id:
+        type: string
+        default: ''
 
 env:
   ACTIONS_RUNNER_DEBUG: false
@@ -18,21 +35,33 @@ env:
 
 jobs:
   check-connection:
-    if: ${{ inputs.check_connection_only && !inputs.renew_authorization }}
+    if: ${{ inputs.check_connection_only && !inputs.renew_authorization && !inputs.collect_reports }}
     permissions:
       contents: read
     uses: ./.github/workflows/test-youtube-readonly.yml
     secrets: inherit
 
   renew-authorization:
-    if: ${{ inputs.renew_authorization && !inputs.check_connection_only }}
+    if: ${{ inputs.renew_authorization && !inputs.check_connection_only && !inputs.collect_reports }}
     permissions:
       contents: read
     uses: ./.github/workflows/authorize-youtube.yml
     secrets: inherit
 
+  collect-reports:
+    if: ${{ inputs.collect_reports && !inputs.check_connection_only && !inputs.renew_authorization }}
+    permissions:
+      contents: read
+    uses: ./.github/workflows/collect-youtube-reports.yml
+    with:
+      report_start: ${{ inputs.report_start }}
+      report_end: ${{ inputs.report_end }}
+      report_public_key: ${{ inputs.report_public_key }}
+      report_request_id: ${{ inputs.report_request_id }}
+    secrets: inherit
+
   backfill-youtube-metrics:
-    if: ${{ !inputs.check_connection_only && !inputs.renew_authorization }}
+    if: ${{ !inputs.check_connection_only && !inputs.renew_authorization && !inputs.collect_reports }}
     runs-on: windows-latest
 
     steps:

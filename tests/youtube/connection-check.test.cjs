@@ -14,9 +14,10 @@ fs.writeFileSync(scriptFile, script);
 
 test('manual diagnostic cannot execute the backfill job', () => {
   assert.deepEqual(workflow.permissions, { contents: 'read' });
-  assert.equal(caller.jobs['check-connection'].if, '${{ inputs.check_connection_only && !inputs.renew_authorization }}');
-  assert.equal(caller.jobs['backfill-youtube-metrics'].if, '${{ !inputs.check_connection_only && !inputs.renew_authorization }}');
-  assert.equal(caller.jobs['renew-authorization'].if, '${{ inputs.renew_authorization && !inputs.check_connection_only }}');
+  assert.equal(caller.jobs['check-connection'].if, '${{ inputs.check_connection_only && !inputs.renew_authorization && !inputs.collect_reports }}');
+  assert.equal(caller.jobs['backfill-youtube-metrics'].if, '${{ !inputs.check_connection_only && !inputs.renew_authorization && !inputs.collect_reports }}');
+  assert.equal(caller.jobs['renew-authorization'].if, '${{ inputs.renew_authorization && !inputs.check_connection_only && !inputs.collect_reports }}');
+  assert.equal(caller.jobs['collect-reports'].if, '${{ inputs.collect_reports && !inputs.check_connection_only && !inputs.renew_authorization }}');
   assert.equal(workflow.on.schedule, undefined);
 });
 

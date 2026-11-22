@@ -4,6 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "youtube:collect": "tsx scripts/collect-youtube.ts",
+    "youtube:test": "node --import tsx --test tests/youtube/*.test.*",
     "dev": "npm run build:content && vite",
     "build:content": "tsx scripts/build-content.ts",
     "content:validate": "tsx scripts/validate-content.ts",
