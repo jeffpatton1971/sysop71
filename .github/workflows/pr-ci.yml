@@ -12,7 +12,7 @@ permissions:
 jobs:
   validate-and-test:
     name: Validate and test
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Checkout
@@ -33,6 +33,9 @@ jobs:
 
       - name: Validate content
         run: npm run content:validate
+
+      - name: Test YouTube tooling
+        run: npm run youtube:test
 
       - name: Run tests
         run: npm run test

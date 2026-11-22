@@ -1,0 +1,131 @@
+name: Test YouTube Read-Only Connection
+
+on:
+  workflow_dispatch:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  check-connection:
+    runs-on: windows-latest
+    timeout-minutes: 5
+    steps:
+      - name: Authenticate to Azure
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Check existing YouTube credentials and read-only access
+        shell: pwsh
+        env:
+          YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
+          YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+          KEY_VAULT_NAME: ${{ secrets.AZURE_KEYVAULT_NAME }}
+          CHANNEL_ID: ${{ vars.CHANNEL_ID }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $ProgressPreference = 'SilentlyContinue'
+          $summary = [System.Collections.Generic.List[string]]::new()
+          $summary.Add('## YouTube connection check')
+          $stage = 'configuration'
+          try {
+            foreach ($name in @('YT_CLIENT_ID', 'YT_CLIENT_SECRET', 'KEY_VAULT_NAME', 'CHANNEL_ID')) {
+              if ([string]::IsNullOrWhiteSpace([Environment]::GetEnvironmentVariable($name))) {
+                throw "Required setting missing: $name"
+              }
+            }
+            if ($env:CHANNEL_ID -notmatch '^UC[A-Za-z0-9_-]{22}$') {
+              throw 'CHANNEL_ID must be a YouTube channel ID.'
+            }
+
+            $stage = 'reading the existing Key Vault refresh token'
+            $refreshToken = az keyvault secret show --vault-name $env:KEY_VAULT_NAME --name 'YouTube-RefreshToken' --query value --output tsv --only-show-errors 2>$null
+            if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($refreshToken)) {
+              throw 'Key Vault read failed.'
+            }
+            Write-Output "::add-mask::$refreshToken"
+            $summary.Add('- Existing Key Vault refresh token: retrieved.')
+
+            $stage = 'exchanging the refresh token with Google'
+            $token = Invoke-RestMethod -Method Post -Uri 'https://oauth2.googleapis.com/token' -ContentType 'application/x-www-form-urlencoded' -Body @{
+              client_id = $env:YT_CLIENT_ID
+              client_secret = $env:YT_CLIENT_SECRET
+              refresh_token = $refreshToken
+              grant_type = 'refresh_token'
+            }
+            if ([string]::IsNullOrWhiteSpace($token.access_token)) { throw 'No access token returned.' }
+            Write-Output "::add-mask::$($token.access_token)"
+            if ($token.refresh_token) { Write-Output "::add-mask::$($token.refresh_token)" }
+            $summary.Add('- Existing client ID, client secret, and refresh token: accepted by Google.')
+
+            $stage = 'checking the permissions granted by Google'
+            $info = Invoke-RestMethod -Method Get -Uri ('https://oauth2.googleapis.com/tokeninfo?access_token=' + [uri]::EscapeDataString($token.access_token))
+            $scopes = @($info.scope -split ' ' | Where-Object { $_ })
+            $readScopes = @('https://www.googleapis.com/auth/youtube.readonly', 'https://www.googleapis.com/auth/yt-analytics.readonly')
+            $missingScopes = @($readScopes | Where-Object { $_ -notin $scopes })
+            $extraScopes = @($scopes | Where-Object { $_ -notin $readScopes })
+            $summary.Add('- Granted scopes:')
+            foreach ($scope in $scopes) { $summary.Add("  - ``$scope``") }
+            if ($missingScopes.Count -gt 0) {
+              $summary.Add('- Required read-only scopes missing: ' + ($missingScopes -join ', '))
+              throw 'Required read-only scopes missing.'
+            }
+            if ($extraScopes.Count -gt 0) {
+              $summary.Add('- This token has additional permissions. Create a dedicated read-only grant before using it with the local collector.')
+              throw 'Grant is broader than the collector requires.'
+            }
+            $summary.Add('- Permission check: exactly the two required read-only scopes.')
+
+            $headers = @{ Authorization = "Bearer $($token.access_token)" }
+            $stage = 'verifying the authorized channel through YouTube Data API'
+            $channels = Invoke-RestMethod -Method Get -Uri 'https://www.googleapis.com/youtube/v3/channels?part=id&mine=true' -Headers $headers
+            if ($env:CHANNEL_ID -notin @($channels.items.id)) { throw 'Authorized channel does not match CHANNEL_ID.' }
+            $summary.Add('- Authorized channel: matches repository CHANNEL_ID.')
+
+            $stage = 'reading YouTube Analytics for September 1-10, 2026'
+            $query = @{
+              ids = "channel==$($env:CHANNEL_ID)"
+              startDate = '2026-09-01'
+              endDate = '2026-09-10'
+              dimensions = 'day'
+              metrics = 'views,engagedViews,estimatedMinutesWatched'
+              sort = 'day'
+            }
+            $queryString = ($query.GetEnumerator() | ForEach-Object { [uri]::EscapeDataString($_.Key) + '=' + [uri]::EscapeDataString($_.Value) }) -join '&'
+            $report = Invoke-RestMethod -Method Get -Uri ("https://youtubeanalytics.googleapis.com/v2/reports?$queryString") -Headers $headers
+            $rowCount = @($report.rows | Where-Object { $null -ne $_ }).Count
+            $summary.Add('- Analytics API request: succeeded.')
+            $summary.Add("- September 1-10 history: $rowCount daily rows returned. No metric values are included in these logs.")
+            if ($rowCount -eq 0) { $summary.Add('- Empty history is not proof of zero activity; investigate availability separately.') }
+            $summary.Add('- No YouTube content, Key Vault secrets, MongoDB records, or repository files were changed.')
+            Write-Host 'Read-only YouTube connection check passed.'
+          } catch {
+            # Raw PowerShell HTTP errors can include request bodies or token URLs.
+            $status = $null
+            if ($_.Exception.Response) { $status = [int]$_.Exception.Response.StatusCode }
+            $summary.Add("- FAILED while $stage$(if ($status) { " (HTTP $status)" }).")
+            if ($stage -eq 'exchanging the refresh token with Google') {
+              try {
+                $oauthError = ($_.ErrorDetails.Message | ConvertFrom-Json).error
+                $knownErrors = @{
+                  invalid_grant = 'Google rejected the refresh grant. It may be expired, revoked, or associated with a different client.'
+                  invalid_client = 'Google rejected the OAuth client authentication. Check the client ID and client secret.'
+                  unauthorized_client = 'This OAuth client is not authorized for this grant type.'
+                  invalid_scope = 'Google rejected the requested permission scope.'
+                  access_denied = 'Google denied authorization.'
+                  unsupported_grant_type = 'Google rejected the grant type.'
+                }
+                if ($oauthError -is [string] -and $knownErrors.ContainsKey($oauthError)) {
+                  $summary.Add("- Google OAuth error: ``$oauthError``. $($knownErrors[$oauthError])")
+                }
+              } catch { } # Never log unrecognized response content.
+            }
+            $summary.Add('- Credentials and raw HTTP error bodies have been withheld from the logs.')
+            Write-Host "::error::YouTube connection check failed while $stage. See the run summary."
+            exit 1
+          } finally {
+            $summary -join "`n" | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append -Encoding utf8
+            foreach ($line in $summary) { Write-Host $line }
+          }
