@@ -25,7 +25,17 @@ async function main(): Promise<void> {
         await new Promise(resolve => setTimeout(resolve, 1000 * (2 ** attempt)));
         continue;
       }
-      if (!response.ok) throw new Error(`Google API returned HTTP ${response.status}.`);
+      if (!response.ok) {
+        // Analytics errors are retained only inside the encrypted bundle, never runner logs.
+        let detail = '';
+        if (endpoint === 'https://youtubeanalytics.googleapis.com/v2/reports') {
+          try {
+            const body = await response.json() as { error?: { message?: string } };
+            detail = typeof body.error?.message === 'string' ? body.error.message.replaceAll(accessToken, '[redacted]').slice(0, 500) : '';
+          } catch { /* Status alone remains useful when the error body is unavailable. */ }
+        }
+        throw new Error(`Google API returned HTTP ${response.status}.${detail ? ` ${detail}` : ''}`);
+      }
       try { return await response.json() as T; }
       catch { throw new Error('Google API returned invalid JSON.'); }
     }
@@ -53,7 +63,7 @@ async function main(): Promise<void> {
   };
   for (const item of plan) {
     try {
-      const data = await fetchReport(get, item.query, 200, item.name === 'top-videos-by-format');
+      const data = await fetchReport(get, item.query, 200, item.name === 'top-videos');
       bundle.reports.push({ ...item, status: 'ok', data });
       console.log(`Collected ${item.name}.`);
     } catch (error) {
@@ -75,7 +85,7 @@ async function main(): Promise<void> {
     seenTokens.add(pageToken);
   } while (pageToken);
   // Include available videos that earned historical views but are absent from today's uploads listing.
-  const videoReport = bundle.reports.find(report => report.name === 'top-videos-by-format')?.data;
+  const videoReport = bundle.reports.find(report => report.name === 'top-videos')?.data;
   const videoColumn = videoReport?.columnHeaders.findIndex(header => header.name === 'video') ?? -1;
   if (videoColumn >= 0) videoReport?.rows?.forEach(row => ids.add(String(row[videoColumn])));
   const allIds = [...ids];

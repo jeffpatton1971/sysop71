@@ -151,7 +151,7 @@ enter the report bundle. The local command decrypts the bundle and writes:
 | `total.csv` | Channel totals for the requested window |
 | `daily.csv` | Daily channel metrics |
 | `daily-by-format.csv` | Daily metrics using Google's `creatorContentType` classification |
-| `top-videos-by-format.csv` | Top 200 video/content-type rows; this ranking is capped, not an exhaustive catalogue |
+| `top-videos.csv` | Top 200 videos; this ranking is capped, not an exhaustive catalogue. Use daily reports for content-type classification. |
 | `traffic-by-day-format.csv` | Traffic sources by day and content type |
 | `devices-by-day-format.csv` | Device types by day and content type |
 | `video-metadata.csv` | Current video IDs, titles, UTC publication timestamps, and ISO 8601 durations |

@@ -91,7 +91,7 @@ export function makePlan(start: string, end: string): { name: string; query: Que
     { name: 'total', query: { ...base, metrics: METRICS } },
     { name: 'daily', query: { ...base, dimensions: 'day', metrics: METRICS, sort: 'day' } },
     { name: 'daily-by-format', query: { ...base, dimensions: 'day,creatorContentType', metrics: METRICS, sort: 'day,creatorContentType' } },
-    { name: 'top-videos-by-format', query: { ...base, dimensions: 'video,creatorContentType', metrics: METRICS, sort: '-views' } },
+    { name: 'top-videos', query: { ...base, dimensions: 'video', metrics: METRICS, sort: '-views' } },
     { name: 'traffic-by-day-format', query: { ...base, dimensions: 'day,insightTrafficSourceType,creatorContentType', metrics: core, sort: 'day,insightTrafficSourceType,creatorContentType' } },
     { name: 'devices-by-day-format', query: { ...base, dimensions: 'day,deviceType,creatorContentType', metrics: core, sort: 'day,deviceType,creatorContentType' } },
   ];
