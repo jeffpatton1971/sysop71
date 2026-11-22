@@ -23,7 +23,9 @@ gh workflow run backfill-youtube-metrics.yml --repo jeffpatton1971/sysop71 --ref
 ```
 
 The flag selects the diagnostic job and skips the original backfill job.
-Omitting it retains the existing backfill behavior, which writes to MongoDB.
+Omitting both `check_connection_only` and `renew_authorization` retains the
+existing backfill behavior, which writes to MongoDB. Setting both flags runs
+neither operation.
 
 The check reads the existing refresh token, exchanges it for a short-lived access
 token, validates the exact scopes below, checks the authorized channel against
@@ -62,6 +64,52 @@ to client authentication.
    workflow input, commit, log, or public artifact.
 6. Rerun the diagnostic and confirm all stages pass before enabling collection.
 
+### Existing web client with localhost redirect
+
+The owner identified **Github Workflow Client**, a web application in the
+`valued-etching-121717` Google project. Its registered redirect is exactly
+`http://localhost`. The app is External and In production, and the owner added
+both required read-only scopes. These settings were observed in the owner's
+Google Cloud screenshots; the workflow still independently checks the client
+and channel before saving anything.
+
+The local sign-in helper reuses the client secret already stored in GitHub:
+
+```powershell
+npm ci
+npx tsx scripts/authorize-youtube.ts --client-id <copy the existing web client ID from Google Cloud>
+```
+
+Run it on the same computer as the browser, while signed in to GitHub CLI with
+permission to manage this repository's Actions secrets and run workflows.
+Local port 80 must be free. Open the printed Google sign-in link, select the
+account that owns Sysop71 Gaming, select the channel if Google prompts, and
+approve the two read-only permissions. The helper waits up to 15 minutes.
+
+The helper uses a random state value and PKCE challenge, accepts the callback
+only on the local loopback interface, and never prints the authorization code.
+It uploads the one-time code and verifier through standard input into the
+encrypted `YT_OAUTH_GRANT` GitHub repository secret and dispatches the branch's
+backfill workflow with `renew_authorization=true`. No code or token is passed in
+workflow inputs. The helper deletes this temporary secret after the run.
+
+The renewal workflow exchanges that code using `YT_CLIENT_ID` and
+`YT_CLIENT_SECRET`, checks the exact read-only scopes and authorized channel,
+and verifies Analytics access. Only then does it save a new version of
+`YouTube-RefreshToken` in the existing Key Vault. Its temporary token file is
+removed and the Azure CLI secret response is suppressed. It does not change
+client credentials, YouTube content, MongoDB, or scheduled workflow settings.
+
+If the helper is interrupted after upload, inspect the run and then delete
+`YT_OAUTH_GRANT` from repository Actions secrets. A used or expired code cannot
+be reused; restart the helper to authorize again. If no refresh token is
+returned, the workflow fails without updating Key Vault.
+
+This limited personal tool can use Google's limited-audience verification
+exception. A sensitive-scope verification form or unverified-app notice does
+not by itself require submitting a public-app demo video. The owner must make
+the Google sign-in/consent decision. See [Google's verification exceptions](https://support.google.com/cloud/answer/13464323).
+
 An External consent app in **Testing** normally issues a refresh token that
 expires after seven days for these scopes. Resolve the app's publishing status
 before planning unattended collection. Inactivity can also expire a refresh token
@@ -79,12 +127,16 @@ read-only grant. The diagnostic does not publish analytics to the public site.
 
 ```powershell
 npm ci
-node --test tests/youtube/connection-check.test.cjs
+node --import tsx --test tests/youtube/connection-check.test.cjs tests/youtube/authorization.test.ts tests/youtube/save-authorization.test.cjs
+npx tsc -p tsconfig.node.json
 ```
 
 Tests launch PowerShell with mocked Google and Azure responses. They cover
 successful and empty reports, missing/broad scopes, wrong-channel selection,
 OAuth/API errors, safe error-code reporting, secret redaction, and job selection.
+Authorization tests also check callback state, the PKCE challenge, expired and
+mismatched grants, token-file cleanup, and that only a fully validated token
+can reach the Key Vault write.
 
 ## References
 

@@ -7,6 +7,10 @@ on:
         description: Test read-only credentials without backfilling or writing data
         type: boolean
         default: false
+      renew_authorization:
+        description: Exchange the one-time Google authorization saved by the local helper
+        type: boolean
+        default: false
 
 env:
   ACTIONS_RUNNER_DEBUG: false
@@ -14,14 +18,21 @@ env:
 
 jobs:
   check-connection:
-    if: ${{ inputs.check_connection_only }}
+    if: ${{ inputs.check_connection_only && !inputs.renew_authorization }}
     permissions:
       contents: read
     uses: ./.github/workflows/test-youtube-readonly.yml
     secrets: inherit
 
+  renew-authorization:
+    if: ${{ inputs.renew_authorization && !inputs.check_connection_only }}
+    permissions:
+      contents: read
+    uses: ./.github/workflows/authorize-youtube.yml
+    secrets: inherit
+
   backfill-youtube-metrics:
-    if: ${{ !inputs.check_connection_only }}
+    if: ${{ !inputs.check_connection_only && !inputs.renew_authorization }}
     runs-on: windows-latest
 
     steps:

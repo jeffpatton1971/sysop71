@@ -1,0 +1,35 @@
+name: Save Renewed YouTube Authorization
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: youtube-authorization
+  cancel-in-progress: false
+
+jobs:
+  authorize:
+    runs-on: windows-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout authorization script
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Authenticate to Azure
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - name: Verify and save the renewed authorization
+        shell: pwsh
+        env:
+          YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
+          YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+          YT_OAUTH_GRANT: ${{ secrets.YT_OAUTH_GRANT }}
+          KEY_VAULT_NAME: ${{ secrets.AZURE_KEYVAULT_NAME }}
+          CHANNEL_ID: ${{ vars.CHANNEL_ID }}
+        run: ./scripts/Save-YouTubeAuthorization.ps1
