@@ -61,7 +61,7 @@ export function reportCsv(report: Report): string {
   return [report.columnHeaders.map(header => header.name), ...(report.rows || [])].map(row => row.map(escape).join(',')).join('\r\n') + '\r\n';
 }
 
-export async function fetchReport(get: GetJson, query: Query, pageSize = 200): Promise<Report> {
+export async function fetchReport(get: GetJson, query: Query, pageSize = 200, singlePage = false): Promise<Report> {
   const rows: NonNullable<Report['rows']> = [];
   let headers: Report['columnHeaders'] | undefined;
   const seen = new Set<string>();
@@ -78,7 +78,7 @@ export async function fetchReport(get: GetJson, query: Query, pageSize = 200): P
       seen.add(signature);
     }
     rows.push(...batch);
-    if (batch.length < pageSize) return { columnHeaders: headers, rows };
+    if (singlePage || batch.length < pageSize) return { columnHeaders: headers, rows };
   }
   throw new Error('Report pagination safety limit reached.');
 }
@@ -91,7 +91,7 @@ export function makePlan(start: string, end: string): { name: string; query: Que
     { name: 'total', query: { ...base, metrics: METRICS } },
     { name: 'daily', query: { ...base, dimensions: 'day', metrics: METRICS, sort: 'day' } },
     { name: 'daily-by-format', query: { ...base, dimensions: 'day,creatorContentType', metrics: METRICS, sort: 'day,creatorContentType' } },
-    { name: 'videos-by-format', query: { ...base, dimensions: 'video,creatorContentType', metrics: METRICS, sort: '-views' } },
+    { name: 'top-videos-by-format', query: { ...base, dimensions: 'video,creatorContentType', metrics: METRICS, sort: '-views' } },
     { name: 'traffic-by-day-format', query: { ...base, dimensions: 'day,insightTrafficSourceType,creatorContentType', metrics: core, sort: 'day,insightTrafficSourceType,creatorContentType' } },
     { name: 'devices-by-day-format', query: { ...base, dimensions: 'day,deviceType,creatorContentType', metrics: core, sort: 'day,deviceType,creatorContentType' } },
   ];

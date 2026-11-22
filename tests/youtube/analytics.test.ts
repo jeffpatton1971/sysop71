@@ -26,6 +26,17 @@ test('pagination rejects repeated pages and changed columns', async () => {
   await assert.rejects(fetchReport(changed, {}, 1), /columns changed/);
 });
 
+test('bounded top-video report stops at its documented limit without requesting page two', async () => {
+  let calls = 0;
+  const get: GetJson = async <T>() => {
+    calls++;
+    return { columnHeaders: [{ name: 'video' }], rows: Array.from({ length: 200 }, (_, i) => [`video-${i}`]) } as T;
+  };
+  const report = await fetchReport(get, {}, 200, true);
+  assert.equal(calls, 1);
+  assert.equal(report.rows?.length, 200);
+});
+
 test('CSV quotes cells and neutralizes text formulas without changing numbers', () => {
   const text = reportCsv({ columnHeaders: [{ name: 'title' }, { name: 'views' }], rows: [['=1+1', -1], ['A,"B"\nC', 2]] });
   assert.ok(text.includes('"\'=1+1","-1"'));

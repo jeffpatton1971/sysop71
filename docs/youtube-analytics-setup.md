@@ -23,9 +23,9 @@ gh workflow run backfill-youtube-metrics.yml --repo jeffpatton1971/sysop71 --ref
 ```
 
 The flag selects the diagnostic job and skips the original backfill job.
-Omitting both `check_connection_only` and `renew_authorization` retains the
-existing backfill behavior, which writes to MongoDB. Setting both flags runs
-neither operation.
+Leaving all three mode flags (`check_connection_only`, `renew_authorization`,
+and `collect_reports`) false retains the existing backfill behavior, which
+writes to MongoDB. Selecting more than one mode runs no operation.
 
 The check reads the existing refresh token, exchanges it for a short-lived access
 token, validates the exact scopes below, checks the authorized channel against
@@ -151,7 +151,7 @@ enter the report bundle. The local command decrypts the bundle and writes:
 | `total.csv` | Channel totals for the requested window |
 | `daily.csv` | Daily channel metrics |
 | `daily-by-format.csv` | Daily metrics using Google's `creatorContentType` classification |
-| `videos-by-format.csv` | Video performance by content type, with pagination |
+| `top-videos-by-format.csv` | Top 200 video/content-type rows; this ranking is capped, not an exhaustive catalogue |
 | `traffic-by-day-format.csv` | Traffic sources by day and content type |
 | `devices-by-day-format.csv` | Device types by day and content type |
 | `video-metadata.csv` | Current video IDs, titles, UTC publication timestamps, and ISO 8601 durations |
@@ -192,7 +192,7 @@ directory (which may still follow the owner's existing OneDrive synchronization)
 
 ```powershell
 npm ci
-node --import tsx --test tests/youtube/connection-check.test.cjs tests/youtube/authorization.test.ts tests/youtube/save-authorization.test.cjs
+npm run youtube:test
 npx tsc -p tsconfig.node.json
 ```
 

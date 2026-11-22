@@ -46,13 +46,14 @@ async function main(): Promise<void> {
       'Views and watch time retain YouTube methodology, including applicable co-view estimates. No adjustment was invented.',
       'Average duration/percentage are returned by Google, not calculated from public views.',
       'Video metadata is a current catalogue, not a publication count for the requested date range.',
+      'The top-videos report is capped at 200 rows. Per-video daily reports separately cover the available uploads catalogue and IDs returned by that ranking.',
       'Subscriber attribution can differ between channel-level and video-level reports.',
       'Thumbnail impressions/CTR, Shorts feed exposure, and co-view rate still require Studio exports where unavailable through these report definitions.',
     ],
   };
   for (const item of plan) {
     try {
-      const data = await fetchReport(get, item.query);
+      const data = await fetchReport(get, item.query, 200, item.name === 'top-videos-by-format');
       bundle.reports.push({ ...item, status: 'ok', data });
       console.log(`Collected ${item.name}.`);
     } catch (error) {
@@ -74,7 +75,7 @@ async function main(): Promise<void> {
     seenTokens.add(pageToken);
   } while (pageToken);
   // Include available videos that earned historical views but are absent from today's uploads listing.
-  const videoReport = bundle.reports.find(report => report.name === 'videos-by-format')?.data;
+  const videoReport = bundle.reports.find(report => report.name === 'top-videos-by-format')?.data;
   const videoColumn = videoReport?.columnHeaders.findIndex(header => header.name === 'video') ?? -1;
   if (videoColumn >= 0) videoReport?.rows?.forEach(row => ids.add(String(row[videoColumn])));
   const allIds = [...ids];
