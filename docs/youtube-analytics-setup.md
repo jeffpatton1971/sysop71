@@ -120,8 +120,73 @@ suppress the Azure CLI secret-write response. Review that logging before enablin
 it. A collector normally refreshes its access token as needed; a separate daily
 job to rewrite the refresh token is unnecessary.
 
-Local collector implementation and a live data export remain pending a valid
-read-only grant. The diagnostic does not publish analytics to the public site.
+## Collect reports locally
+
+The local command starts an on-demand GitHub Actions collection using the
+existing Key Vault grant, waits for the run, and saves JSON/CSV reports on this
+computer. It does not require local copies of the Google client secret or refresh
+token, Azure CLI, or MongoDB. It requires Node 22 or newer, repository dependencies
+(`npm ci`), and GitHub CLI signed in with permission to run Actions and download
+artifacts from `jeffpatton1971/sysop71`.
+
+```powershell
+npm run youtube:collect -- --start 2026-09-01 --end 2026-11-20
+```
+
+Until this draft is merged, the default workflow branch is
+`codex/youtube-local-analytics`. After merge, pass `--ref main`. Choose a window
+of 1–90 days. Reports are saved in a unique folder under `.tmp/youtube-reports/`,
+which is excluded from Git and the website build. No schedule is enabled.
+
+Because the repository is public, the runner encrypts the report bundle with a
+new RSA-3072 public key supplied by the local command and AES-256-GCM. Only the
+encrypted bundle is uploaded as an artifact, retained for one day. The private
+key stays in the local command's memory. Google tokens and credentials never
+enter the report bundle. The local command decrypts the bundle and writes:
+
+| File | Contents |
+| --- | --- |
+| `reports.json` | Original API headers/rows, exact queries, requested dates, collection timestamp, notes, and per-report status |
+| `manifest.json` | Collection status, workflow link, report row counts, observed date bounds, and failed reports |
+| `total.csv` | Channel totals for the requested window |
+| `daily.csv` | Daily channel metrics |
+| `daily-by-format.csv` | Daily metrics using Google's `creatorContentType` classification |
+| `videos-by-format.csv` | Video performance by content type, with pagination |
+| `traffic-by-day-format.csv` | Traffic sources by day and content type |
+| `devices-by-day-format.csv` | Device types by day and content type |
+| `video-metadata.csv` | Current video IDs, titles, UTC publication timestamps, and ISO 8601 durations |
+| `video-daily.csv` | Combined per-video daily metrics from batches of up to 50 video IDs |
+| `video-daily-NNN.csv` | Individual batch results, traceable to exact queries in JSON |
+
+The daily/content reports include views, engaged views, watch minutes, average
+view duration, average percentage viewed, subscribers gained, and subscribers
+lost. Traffic/device reports use the smaller supported metric set. Failed reports
+are marked as errors; successful reports are still saved, and the command exits
+with a failure status for a partial collection. Fix the failed request and rerun
+before treating a partial bundle as complete.
+
+Do not close the local command while it waits. If it is interrupted, its in-memory
+private key is lost and the encrypted artifact cannot be recovered; run a fresh
+collection. No API metrics are printed in public workflow logs. Ordinary local
+JSON/CSV files contain private channel analytics and stay in the local ignored
+directory (which may still follow the owner's existing OneDrive synchronization).
+
+### Interpreting the output
+
+- Analytics days use Pacific time (`America/Los_Angeles`). Metadata publication
+  timestamps remain UTC. Convert timestamps to Pacific time before joining by day.
+- The requested end date is not a guarantee of data availability. Observe the
+  returned dates, especially for recent data. Missing rows are not filled as zeros.
+- The metadata catalogue is current and can include videos outside the requested
+  window. Missing/deleted items and different subscriber attribution can prevent
+  per-video sums from exactly matching channel totals.
+- Preserve Google's metric definitions across the November 16 reporting change.
+  Do not use watch time divided by public views as a replacement for average view
+  duration. A device breakdown does not provide a co-view correction by itself.
+- Impressions/CTR, Shorts feed exposure, and co-view rate still require Studio
+  exports when unsupported by these Analytics API report definitions.
+- Reports describe aggregate viewing. They do not identify individual viewers or
+  establish conversion from a specific Short into its companion full episode.
 
 ## Validation
 
