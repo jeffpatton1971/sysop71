@@ -190,6 +190,49 @@ directory (which may still follow the owner's existing OneDrive synchronization)
 
 ## Validation
 
+### Weekly and monthly history
+
+Build the private report archive from successful local collections:
+
+```powershell
+npm run youtube:reports -- --as-of 2026-11-22
+```
+
+The default archive is `../youtube-report-archive`, outside this public repository.
+It contains an HTML index, readable reports with daily charts, report JSON, and
+durable copies of the source bundles. Use `--archive <path>` to choose another
+private location. The default as-of date uses America/Chicago.
+
+The owner's Codex chat schedules the weekly report for Sunday at 00:00 Central
+and the monthly report for the first day at 00:00 Central. These are chat
+automations, not additional GitHub cron workflows. Each refresh collects the
+latest 90 inclusive days (never earlier than September 1, 2026), then rebuilds
+the archive. Sources preserve older dates beyond that moving collection window.
+
+- Weeks run Sunday through Saturday, starting with the partial September 1–5
+  week. A week still in progress can exist to support month-end accumulation.
+- Months are calendar months. Their totals accumulate the weekly reports' daily
+  records clipped to the month's boundaries, including any closing partial week.
+  Whole cross-boundary weeks are never added to both months.
+- Missing dates stay missing. Reports remain provisional until every channel
+  reporting day is present. Later collections replace overlapping daily records
+  with newer observations and rebuild affected reports without double counting.
+- Historical reports are reconstructed using data available now, not represented
+  as snapshots captured on their original scheduled dates. The JSON retains
+  per-day collection timestamps and source request IDs.
+- Watch time is explicitly the sum of daily integer-minute API rows and can
+  differ from an independent aggregate query. Format comparisons remain separate;
+  monthly growth uses per-day rates to account for unequal month lengths.
+- Saved reports include evidence-linked experiment suggestions. Scheduled chat
+  runs synthesize the current report and recent history, with measurable growth
+  ideas and a clear distinction between observations and hypotheses.
+
+The initial November 22 backfill creates 12 weekly reports and two monthly
+reports (September and October). The November 15–21 week is provisional in the
+initial source collection because November 20–21 have not been returned.
+
+### Checks
+
 ```powershell
 npm ci
 npm run youtube:test
@@ -202,6 +245,9 @@ OAuth/API errors, safe error-code reporting, secret redaction, and job selection
 Authorization tests also check callback state, the PKCE challenge, expired and
 mismatched grants, token-file cleanup, and that only a fully validated token
 can reach the Key Vault write.
+History tests cover the initial short week, delayed dates, replacement of revised
+observations, current-day exclusion, and monthly accumulation across week/month
+boundaries without duplicate days.
 
 ## References
 

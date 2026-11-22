@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "youtube:collect": "tsx scripts/collect-youtube.ts",
+    "youtube:reports": "tsx scripts/build-youtube-history.ts",
     "youtube:test": "node --import tsx --test tests/youtube/*.test.*",
     "dev": "npm run build:content && vite",
     "build:content": "tsx scripts/build-content.ts",
